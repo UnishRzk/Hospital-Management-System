@@ -6,23 +6,21 @@
     <title>Patient Dashboard — SwasthyaTrack</title>
     <link rel="stylesheet" href="../css/patient-dashboard.css">
 </head>
-
 <body>
-
-
-    <header>
-        <div class="logo">
-            <a href="home.php">
-                <img class="nav-img" src="../images/nav-logo.png" alt="">
-                <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
-            </a>
-        </div>
-        <nav>
-            <a href="../auth/logout.php" class="btn-login">Logout</a>
-        </nav>
-    </header>
+<header>
+    <div class="logo">
+        <a href="home.php">
+            <img class="nav-img" src="../images/nav-logo.png" alt="">
+            <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
+        </a>
+    </div>
+    <nav>
+        <a href="../auth/logout.php" class="btn-login">Logout</a>
+    </nav>
+</header>
 
 <main role="main">
+
     <!-- Dashboard Top -->
     <section class="dashboard-top">
         <div class="quick-actions">
@@ -30,7 +28,6 @@
                 <div class="icon"><img src="../images/icons/dates.png" alt="calendar"></div>
                 <div class="label">Book Appointment</div>
             </a>
-        
             <a href="book-bed.html" class="action-card">
                 <div class="icon"><img src="../images/icons/hospital-bed.png" alt="bed"></div>
                 <div class="label">Book Bed</div>
@@ -47,7 +44,7 @@
                 <div class="icon"><img src="../images/icons/update-report.png" alt="upload"></div>
                 <div class="label">Upload Report</div>
             </a>
-            <a href="find-doctor.html" class="action-card">
+            <a href="../pages/find-doctors.php" class="action-card">
                 <div class="icon"><img src="../images/icons/doctor.png" alt="doctor"></div>
                 <div class="label">Find a Doctor</div>
             </a>
@@ -71,7 +68,6 @@
             <a href="speciality-cardiology.html" class="spec-card">
                 <img src="icons/heart.svg" alt="cardiology">
                 <div>Cardiology</div>
-                <!-- <small>Book Appointment</small> -->
             </a>
             <a href="speciality-ortho.html" class="spec-card">
                 <img src="icons/orthopedics.svg" alt="orthopedics">
@@ -85,44 +81,12 @@
                 <img src="icons/neurology.svg" alt="neurology">
                 <div>Neurology</div>
             </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-                        <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-
         </div>
     </section>
 </main>
+
+<footer>
+    <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
+</footer>
 </body>
-    <footer>
-        <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
-    </footer>
 </html>
