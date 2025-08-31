@@ -230,23 +230,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <footer>
         <p>&copy; 2025 SwasthyaTrack. All Rights Reserved.</p>
     </footer>
-
-<!-- <div class="form-container">
-    <h2>Patient Signup</h2>
-    <form method="POST">
-        <input type="text" name="name" placeholder="Full Name" required><br>
-        <input type="email" name="email" placeholder="Email" required><br>
-        <select name="gender" required>
-            <option value="">Select Gender</option>
-            <option>male</option>
-            <option>female</option>
-            <option>other</option>
-        </select><br>
-        <input type="text" name="phone" placeholder="Phone" required><br>
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
-        <button type="submit">Signup</button>
-    </form>
-</div> -->
 </body>
 </html>
