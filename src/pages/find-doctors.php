@@ -2,7 +2,7 @@
 include("../config/db.php");
 
 // Fetch doctors
-$result = $conn->query("SELECT doctor_id, name, designation FROM doctors");
+$result = $conn->query("SELECT doctor_id, name, designation, photo FROM doctors");
 
 $doctors = [];
 while($row = $result->fetch_assoc()) {
@@ -39,22 +39,26 @@ while($row = $result->fetch_assoc()) {
     <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
   </footer>
 
-  <script>
-    const doctors = <?php echo json_encode($doctors); ?>;
-    const container = document.getElementById("doctorGrid");
+<script>
+  const doctors = <?php echo json_encode($doctors); ?>;
+  const container = document.getElementById("doctorGrid");
 
-    doctors.forEach((doc, i) => {
-      const card = document.createElement("div");
-      card.className = "doctor-card";
-      card.style.animationDelay = `${i * 0.1}s`;
-      card.innerHTML = `
-        <img src="../images/doctor.png" alt="Doctor">
-        <h3>Dr. ${doc.name}</h3>
-        <p>${doc.designation || "Not specified"}</p>
-        <a href="doctor-profile.php?doctor_id=${doc.doctor_id}">View Profile</a>
-      `;
-      container.appendChild(card);
-    });
-  </script>
+  doctors.forEach((doc, i) => {
+    const card = document.createElement("div");
+    card.className = "doctor-card";
+    card.style.animationDelay = `${i * 0.1}s`;
+
+    // Use uploaded photo if exists, otherwise fallback
+    const imgPath = doc.photo ? `../images/doctors/${doc.photo}` : `../images/doctor.png`;
+
+    card.innerHTML = `
+      <img src="${imgPath}" alt="Doctor">
+      <h3>Dr. ${doc.name}</h3>
+      <p>${doc.designation || "Not specified"}</p>
+      <a href="doctor-profile.php?doctor_id=${doc.doctor_id}">View Profile</a>
+    `;
+    container.appendChild(card);
+  });
+</script>
 </body>
 </html>
