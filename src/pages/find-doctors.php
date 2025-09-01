@@ -2,7 +2,8 @@
 include("../config/db.php");
 
 // Fetch doctors
-$result = $conn->query("SELECT name, designation FROM doctors");
+$result = $conn->query("SELECT doctor_id, name, designation FROM doctors");
+
 $doctors = [];
 while($row = $result->fetch_assoc()) {
     $doctors[] = $row;
@@ -50,7 +51,7 @@ while($row = $result->fetch_assoc()) {
         <img src="../images/doctor.png" alt="Doctor">
         <h3>Dr. ${doc.name}</h3>
         <p>${doc.designation || "Not specified"}</p>
-        <a href="#">View Profile</a>
+        <a href="doctor-profile.php?doctor_id=${doc.doctor_id}">View Profile</a>
       `;
       container.appendChild(card);
     });
