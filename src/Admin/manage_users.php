@@ -139,8 +139,8 @@ function confirmDelete(id) {
 <!-- Sidebar -->
 <div class="sidebar">
   <h2>Admin Panel</h2>
-  <a href="../dashboards/admin_dashboard.php">Dashboard</a>
-  <a href="../auth/create_user.php">Add Users</a>
+  <a href="admin_dashboard.php">Dashboard</a>
+  <a href="create_user.php">Add Users</a>
   <a href="manage_users.php" class="active">Manage Users</a>
   <a href="../auth/logout.php">Logout</a>
 </div>

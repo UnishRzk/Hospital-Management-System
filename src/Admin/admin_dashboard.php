@@ -189,8 +189,8 @@ $totalNurses = $conn->query("SELECT COUNT(*) AS total FROM nurses")->fetch_assoc
   <div class="sidebar" id="sidebar">
     <h2>Admin Panel</h2>
     <a href="#" class="active">Dashboard</a>
-    <a href="../auth/create_user.php">Add Users</a>
-    <a href="../auth/manage_users.php">Manage Users</a>
+    <a href="create_user.php">Add Users</a>
+    <a href="manage_users.php">Manage Users</a>
     <a href="../auth/logout.php">Logout</a>
   </div>
 

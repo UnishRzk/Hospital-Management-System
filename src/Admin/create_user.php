@@ -358,9 +358,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <h2>Admin Panel</h2>
-    <a href="../dashboards/admin_dashboard.php">Dashboard</a>
-    <a href="../auth/create_user.php" class="active">Add Users</a>
-    <a href="../auth/manage_users.php">Manage Users</a>
+    <a href="admin_dashboard.php">Dashboard</a>
+    <a href="create_user.php" class="active">Add Users</a>
+    <a href="manage_users.php">Manage Users</a>
     <a href="../auth/logout.php">Logout</a>
   </div>
 

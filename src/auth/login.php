@@ -19,16 +19,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         switch ($role) {
             case 'patient':
-                header("Location: ../dashboards/patient_dashboard.php");
+                header("Location: ../Patient/patient_dashboard.php");
                 break;
             case 'doctor':
-                header("Location: ../dashboards/doctor_dashboard.php");
+                header("Location: ../Doctor/doctor_dashboard.php");
                 break;
             case 'nurse':
-                header("Location: ../dashboards/nurse_dashboard.php");
+                header("Location: ../Nurse/nurse_dashboard.php");
                 break;
             case 'admin':
-                header("Location: ../dashboards/admin_dashboard.php");
+                header("Location: ../Admin/admin_dashboard.php");
                 break;
         }
         exit();
