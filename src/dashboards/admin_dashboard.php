@@ -1,153 +1,231 @@
 <?php
 session_start();
-if ($_SESSION['role'] != 'admin') {
-    die("Access denied");
-}
-?>
+include("../config/db.php"); // adjust path if needed
 
-<!doctype html>
+// Role check
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    die("Access denied. Only admins can view this page.");
+}
+
+// Query counts
+$totalUsers = $conn->query("SELECT COUNT(*) AS total FROM users")->fetch_assoc()['total'];
+$totalPatients = $conn->query("SELECT COUNT(*) AS total FROM patients")->fetch_assoc()['total'];
+$totalDoctors = $conn->query("SELECT COUNT(*) AS total FROM doctors")->fetch_assoc()['total'];
+$totalNurses = $conn->query("SELECT COUNT(*) AS total FROM nurses")->fetch_assoc()['total'];
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>Patient Dashboard — SwasthyaTrack</title>
-    <link rel="stylesheet" href="../css/patient-dashboard.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      color: #000;
+      background: #f9f9fb;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #015eac;
+      color: #fff;
+      backdrop-filter: blur(10px);
+      box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 12px 20px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #004d91;
+      border-left: 4px solid #fff;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .topbar {
+      background: #fff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar h1 {
+      color: #015eac;
+      font-size: 1.6rem;
+    }
+
+    .topbar input {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      transition: border 0.3s;
+    }
+
+    .topbar input:focus {
+      border: 1px solid #015eac;
+      outline: none;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #015eac;
+    }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      color: #015eac;
+    }
+
+    .card p {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #000;
+    }
+
+    @media (max-width: 992px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        z-index: 1000;
+      }
+
+      .sidebar.show {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 15px;
+      }
+
+      .menu-toggle {
+        display: block;
+        margin-right: 15px;
+      }
+
+      .topbar {
+        justify-content: flex-start;
+        gap: 15px;
+      }
+
+      .topbar h1 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
-
-    <header>
-        <div class="logo">
-            <a href="home.php">
-                <img class="nav-img" src="../images/nav-logo.png" alt="">
-                <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
-            </a>
-        </div>
-        <nav>
-            <a href="../auth/logout.php" class="btn-login">Logout</a>
-        </nav>
-    </header>
-
-<main role="main">
-    <!-- Dashboard Top -->
-    <section class="dashboard-top">
-        <div class="quick-actions">
-            <a href="../auth/create_user.php" class="action-card">
-                <div class="icon"><img src="../images/icons/dates.png" alt="calendar"></div>
-                <div class="label">Add User</div>
-            </a>
-        
-            <a href="book-bed.html" class="action-card">
-                <div class="icon"><img src="../images/icons/hospital-bed.png" alt="bed"></div>
-                <div class="label">Book Bed</div>
-            </a>
-            <a href="prescriptions.html" class="action-card">
-                <div class="icon"><img src="../images/icons/prescription.png" alt="prescriptions"></div>
-                <div class="label">View Prescriptions</div>
-            </a>
-            <a href="reports.html" class="action-card">
-                <div class="icon"><img src="../images/icons/report.png" alt="reports"></div>
-                <div class="label">View Reports</div>
-            </a>
-            <a href="upload-report.html" class="action-card">
-                <div class="icon"><img src="../images/icons/update-report.png" alt="upload"></div>
-                <div class="label">Upload Report</div>
-            </a>
-            <a href="find-doctor.html" class="action-card">
-                <div class="icon"><img src="../images/icons/doctor.png" alt="doctor"></div>
-                <div class="label">Find a Doctor</div>
-            </a>
-        </div>
-
-        <aside class="greeting">
-            <img src="../images/veterinarian.png" alt="Doctor illustration">
-            <h2>Hi User!</h2>
-            <p>Welcome back — here's your quick access panel.</p>
-        </aside>
-    </section>
-
-    <!-- Specialities -->
-    <section class="specialities">
-        <div class="heading-row">
-            <div class="pill">Specialities</div>
-            <div class="special-title">Explore our Centres of Clinical Excellence</div>
-        </div>
-
-        <div class="special-grid">
-            <a href="speciality-cardiology.html" class="spec-card">
-                <img src="icons/heart.svg" alt="cardiology">
-                <div>Cardiology</div>
-                <!-- <small>Book Appointment</small> -->
-            </a>
-            <a href="speciality-ortho.html" class="spec-card">
-                <img src="icons/orthopedics.svg" alt="orthopedics">
-                <div>Orthopedics</div>
-            </a>
-            <a href="speciality-derma.html" class="spec-card">
-                <img src="icons/dermatology.svg" alt="dermatology">
-                <div>Dermatology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-                        <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-            <a href="speciality-neuro.html" class="spec-card">
-                <img src="icons/neurology.svg" alt="neurology">
-                <div>Neurology</div>
-            </a>
-
-        </div>
-    </section>
-</main>
-</body>
-    <footer>
-        <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
-    </footer>
-</html>
-
-
-
-
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-<div class="form-container">
-    <h2>Welcome Admin</h2>
-    <a href="../auth/create_user.php">Create User</a><br><br>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="#" class="active">Dashboard</a>
+    <a href="../auth/create_user.php">Add Users</a>
+    <a href="../auth/manage_users.php">Manage Users</a>
     <a href="../auth/logout.php">Logout</a>
-</div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main">
+    <div class="topbar">
+      <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
+      <h1>Dashboard</h1>
+      <input type="text" placeholder="Search...">
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Total Users</h3>
+        <p><?php echo $totalUsers; ?></p>
+      </div>
+      <div class="card">
+        <h3>Patients</h3>
+        <p><?php echo $totalPatients; ?></p>
+      </div>
+      <div class="card">
+        <h3>Doctors</h3>
+        <p><?php echo $totalDoctors; ?></p>
+      </div>
+      <div class="card">
+        <h3>Nurses</h3>
+        <p><?php echo $totalNurses; ?></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("show");
+    }
+  </script>
 </body>
-</html> -->
+</html>
