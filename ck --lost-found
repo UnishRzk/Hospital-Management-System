@@ -1,0 +1,23 @@
+[33m2278a06[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: reset: moving to origin/main
+[33m5e9f815[m HEAD@{1}: reset: moving to HEAD
+[33m5e9f815[m HEAD@{2}: commit: Refactor code structure for improved readability and maintainability
+[33m2278a06[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{3}: commit: Implement code changes to enhance functionality and improve performance
+[33m7e57c4d[m HEAD@{4}: commit: Added a module that can manage users
+[33m77fb08d[m HEAD@{5}: commit: Updated the dashboard
+[33m6f1bebc[m HEAD@{6}: commit: Implement code changes to enhance functionality and improve performance
+[33m90cb6b7[m HEAD@{7}: commit: Implement multiple code changes for improved functionality and performance
+[33m821e32c[m HEAD@{8}: commit: Refactor doctor profile page: enhance layout with improved photo display and add validation for doctor ID
+[33m27e4b2c[m HEAD@{9}: commit: Refactor doctor profile page: streamline doctor fetching logic, enhance HTML structure, and improve XSS prevention measures
+[33m067a023[m HEAD@{10}: commit: Enhance doctor listing page: add sorting by name, improve HTML escaping for XSS prevention, and refine code structure for readability
+[33me477430[m HEAD@{11}: commit: Refactor doctor profile page for improved readability and maintainability; enhance validation and output escaping
+[33m28d3692[m HEAD@{12}: commit: Refactor patient dashboard styles for improved consistency and responsiveness; remove unused about and services pages
+[33m6f25ea0[m HEAD@{13}: commit: Removed Unnecessary code
+[33m4f82ee9[m HEAD@{14}: commit: Refactor code structure for improved readability and maintainability
+[33m87713f9[m HEAD@{15}: commit: Add photo upload and education fields for doctor user creation
+[33m08738ac[m HEAD@{16}: commit: Add doctor profile page and updated find doctors to include doctor_id
+[33m6b83ca2[m HEAD@{17}: commit: Add find-doctors.php page to display a list of doctors
+[33mfd0a26b[m HEAD@{18}: commit: Made The Frontend of Patient Dashboard
+[33mc15f3af[m HEAD@{19}: commit: Remove commented-out signup form HTML from signup.php
+[33m0d411a0[m HEAD@{20}: commit: Added SmoothScroll
+[33mf6435a2[m HEAD@{21}: commit: Made Login Signup Along With LAnding Page
+[33m2f34799[m HEAD@{22}: commit (initial): Initial Commit
