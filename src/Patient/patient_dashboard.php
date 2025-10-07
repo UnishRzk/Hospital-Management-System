@@ -24,7 +24,7 @@
     <!-- Dashboard Top -->
     <section class="dashboard-top">
         <div class="quick-actions">
-            <a href="book-appointment.html" class="action-card">
+            <a href="book_appointment.php" class="action-card">
                 <div class="icon"><img src="../images/icons/dates.png" alt="calendar"></div>
                 <div class="label">Book Appointment</div>
             </a>
