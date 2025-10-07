@@ -2,6 +2,17 @@
 // Include the database connection file
 include("../config/db.php");
 
+
+session_start();
+
+// Only allow logged-in patients to book
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+$patient_id = $_SESSION['user_id'];
+
 // ------------------------------
 // Validate doctor_id from URL
 // ------------------------------
@@ -74,6 +85,51 @@ $photoPath = "../images/doctor.png"; // Default photo if none provided
 if (!empty($doctor['photo'])) {
     $photoPath = "../images/doctors/" . e($doctor['photo']);
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $fullname  = trim($_POST['fullname']);
+    $phone     = trim($_POST['phone']);
+    $email     = trim($_POST['email']);
+    $address   = trim($_POST['address']);
+    $gender    = $_POST['gender'];
+    $date      = $_POST['date'];
+    $message   = trim($_POST['message']);
+  
+
+    if ($fullname && $phone && $gender && $date) {
+    $stmt = $conn->prepare("
+        INSERT INTO appointments
+        (doctor_id, patient_id, patient_name, phone, email, address, gender, appointment_date, message)
+        VALUES (?,?,?,?,?,?,?,?,?)
+    ");
+    $stmt->bind_param(
+        "iisssssss",
+        $doctor_id,
+        $patient_id,
+        $fullname,
+        $phone,
+        $email,
+        $address,
+        $gender,
+        $date,
+        $message
+    );
+
+
+        if ($stmt->execute()) {
+            $success = true;
+        } else {
+            $error = "Failed to save appointment.";
+        }
+
+        $stmt->close();
+    } else {
+        $error = "Required fields missing.";
+    }
+}
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -387,7 +443,8 @@ if (!empty($doctor['photo'])) {
   </header>
 <div class="form-container">
     <h2>Book Appointment</h2>
-    <form id="appointmentForm" novalidate>
+    
+    <form id="appointmentForm" method="POST">
         <div class="form-grid">
             <div class="form-group">
                 <label for="fullname">Full Name</label>
@@ -574,6 +631,7 @@ if (!empty($doctor['photo'])) {
   </footer>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
     // Min date restriction
     const dateInput = document.getElementById('date');
     dateInput.min = new Date().toISOString().split("T")[0];
@@ -592,34 +650,17 @@ if (!empty($doctor['photo'])) {
         });
     });
 
-    // Form submission handler
-    document.getElementById('appointmentForm').addEventListener('submit', function(e){
-        e.preventDefault();
-        let valid = true;
-
-        this.querySelectorAll('input[required], select[required]').forEach(field => {
-            const error = field.nextElementSibling;
-            if (!field.value.trim()) {
-                error.textContent = "This field is required.";
-                valid = false;
-            } else if (field.name === 'phone' && !/^[0-9]{10}$/.test(field.value)) {
-                error.textContent = "Enter a valid 10-digit number.";
-                valid = false;
-            } else {
-                error.textContent = "";
-            }
-        });
-
-        if (valid) {
-            document.getElementById('successModal').classList.add('active');
-            this.reset();
-        }
-    });
+    // Show modal if PHP sets success
+    <?php if (!empty($success)): ?>
+        document.getElementById('successModal').classList.add('active');
+    <?php endif; ?>
 
     // Close modal
     document.getElementById('closeModal').addEventListener('click', () => {
         document.getElementById('successModal').classList.remove('active');
     });
+});
 </script>
+
 </body>
 </html>
