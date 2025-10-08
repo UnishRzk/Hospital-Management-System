@@ -11,11 +11,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 // --------------------- DELETE APPOINTMENT ---------------------
 if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     $delete_id = (int)$_GET['delete_id'];
-
     $stmt = $conn->prepare("DELETE FROM appointments WHERE appointment_id = ?");
     $stmt->bind_param("i", $delete_id);
     $stmt->execute();
-
     header("Location: manage_appointment.php");
     exit();
 }
@@ -25,33 +23,37 @@ $search = $_GET['search'] ?? '';
 $statusFilter = $_GET['status'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 
-// Base SQL
-$sql = "SELECT appointment_id, patient_name, gender, message, status, appointment_date, doctor_id
-        FROM appointments
+// --------------------- BASE QUERY ---------------------
+$sql = "SELECT a.appointment_id, a.patient_name, a.gender, a.message, a.status, 
+               a.appointment_date, d.name AS doctor_name
+        FROM appointments a
+        JOIN doctors d ON a.doctor_id = d.doctor_id
         WHERE 1=1";
 
 $params = [];
 $types = "";
 
-// Dynamic Filters
+// --------------------- DYNAMIC FILTERS ---------------------
 if ($search !== '') {
-    $sql .= " AND patient_name LIKE ?";
+    $sql .= " AND (a.patient_name LIKE ? OR d.name LIKE ?)";
     $params[] = "%$search%";
-    $types .= "s";
+    $params[] = "%$search%";
+    $types .= "ss";
 }
+
 if ($statusFilter !== '') {
-    $sql .= " AND status = ?";
+    $sql .= " AND a.status = ?";
     $params[] = $statusFilter;
     $types .= "s";
 }
+
 if ($dateFilter !== '') {
-    $sql .= " AND DATE(appointment_date) = ?";
+    $sql .= " AND DATE(a.appointment_date) = ?";
     $params[] = $dateFilter;
     $types .= "s";
 }
 
-// Sort by latest
-$sql .= " ORDER BY appointment_date DESC";
+$sql .= " ORDER BY a.appointment_date DESC";
 
 $stmt = $conn->prepare($sql);
 if (!empty($params)) {
@@ -144,7 +146,7 @@ function confirmDelete(id) {
     <h1>Appointment Management</h1>
     <div class="filter-bar">
       <form method="get">
-        <input type="text" name="search" placeholder="Search by Full Name" value="<?= htmlspecialchars($search) ?>">
+        <input type="text" name="search" placeholder="Search by Patient or Doctor Name" value="<?= htmlspecialchars($search) ?>">
         <select name="status">
           <option value="">Status</option>
           <option value="Booked" <?= $statusFilter == 'Booked' ? 'selected' : '' ?>>Booked</option>
@@ -167,7 +169,7 @@ function confirmDelete(id) {
           <th>Message</th>
           <th>Status</th>
           <th>Date</th>
-          <th>Doctor ID</th>
+          <th>Doctor Name</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -180,7 +182,7 @@ function confirmDelete(id) {
               <td><?= htmlspecialchars($row['message']) ?></td>
               <td><span class="status <?= htmlspecialchars($row['status']) ?>"><?= htmlspecialchars($row['status']) ?></span></td>
               <td><?= htmlspecialchars($row['appointment_date']) ?></td>
-              <td><?= htmlspecialchars($row['doctor_id']) ?></td>
+              <td><?= htmlspecialchars($row['doctor_name']) ?></td>
               <td class="actions">
                 <a href="edit_appointment.php?id=<?= $row['appointment_id'] ?>" class="edit">✏️</a>
                 <a href="javascript:void(0);" onclick="confirmDelete(<?= $row['appointment_id'] ?>)" class="delete">🗑️</a>
