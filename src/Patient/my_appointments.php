@@ -8,27 +8,63 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     exit();
 }
 
-// Logged-in user_id
 $user_id = $_SESSION['user_id'];
 
-// ---------------- FILTERS ----------------
+// ============================
+// HANDLE CANCEL ACTION
+// ============================
+if (isset($_GET['cancel_id']) && is_numeric($_GET['cancel_id'])) {
+    $cancel_id = (int)$_GET['cancel_id'];
+
+    // Check if appointment belongs to this patient and is Booked
+    $stmt = $conn->prepare("SELECT status FROM appointments WHERE appointment_id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $cancel_id, $user_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    if ($res->num_rows > 0) {
+        $appt = $res->fetch_assoc();
+        if ($appt['status'] === 'Booked') {
+            $update = $conn->prepare("UPDATE appointments SET status = 'Cancelled', updated_at = NOW() WHERE appointment_id = ? AND user_id = ?");
+            $update->bind_param("ii", $cancel_id, $user_id);
+            if ($update->execute()) {
+                header("Location: my_appointments.php?cancel=success");
+                exit();
+            } else {
+                header("Location: my_appointments.php?cancel=failed");
+                exit();
+            }
+        } else {
+            header("Location: my_appointments.php?cancel=not_allowed");
+            exit();
+        }
+    } else {
+        header("Location: my_appointments.php?cancel=not_found");
+        exit();
+    }
+}
+
+// ============================
+// FILTERS
+// ============================
 $search = $_GET['search'] ?? '';
 $statusFilter = $_GET['status'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
-$sortOrder = $_GET['sort'] ?? 'desc'; // default: newest first
+$sortOrder = $_GET['sort'] ?? 'desc';
 
-// ---------------- QUERY ----------------
+// ============================
+// FETCH APPOINTMENTS
+// ============================
 $sql = "SELECT a.appointment_id, a.patient_name, a.gender, a.address, a.message,
                a.status, a.appointment_date, d.name AS doctor_name
         FROM appointments a
         JOIN doctors d ON a.doctor_id = d.doctor_id
         WHERE a.user_id = ?
-          AND (a.status = 'Booked' OR a.status = 'Cancelled' OR a.status = 'Completed')";
+          AND (a.status IN ('Booked', 'Cancelled', 'Completed'))";
 
 $params = [$user_id];
 $types = "i";
 
-// Search by doctor/patient name
 if ($search !== '') {
     $sql .= " AND (a.patient_name LIKE ? OR d.name LIKE ?)";
     $searchTerm = "%$search%";
@@ -37,21 +73,18 @@ if ($search !== '') {
     $types .= "ss";
 }
 
-// Status filter
 if ($statusFilter !== '') {
     $sql .= " AND a.status = ?";
     $params[] = $statusFilter;
     $types .= "s";
 }
 
-// Date filter
 if ($dateFilter !== '') {
     $sql .= " AND DATE(a.appointment_date) = ?";
     $params[] = $dateFilter;
     $types .= "s";
 }
 
-// Sorting
 $orderSQL = ($sortOrder === 'asc') ? "ASC" : "DESC";
 $sql .= " ORDER BY a.appointment_date $orderSQL";
 
@@ -66,171 +99,233 @@ $appointments = $stmt->get_result();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Appointments | SwasthyaTrack</title>
+<title>My Appointments — SwasthyaTrack</title>
+<link rel="stylesheet" href="../css/patient-dashboard.css">
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { background: #f9f9fb; padding: 20px; }
+/* Page Container */
+main {
+  padding: 40px 3%;
+  padding-top: 30px;
+  background: linear-gradient(180deg, #f1f7ff, #eef6ff);
+  min-height: 100vh;
+}
 
-    .header {
-        display: flex; justify-content: space-between; align-items: center;
-        margin-bottom: 20px;
-    }
-    .header .logo {
-        display: flex; align-items: center; gap: 8px;
-    }
-    .header img { width: 40px; }
-    .header h1 { color: #015eac; font-size: 1.4rem; }
-    .logout {
-        background: #015eac; color: #fff; text-decoration: none;
-        padding: 8px 15px; border-radius: 4px; transition: 0.3s;
-    }
-    .logout:hover { background: #004d91; }
+/* Filter Bar */
+.filter-bar {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(6, 18, 32, 0.06);
+  padding: 20px;
+  margin-bottom: 25px;
+}
 
-    /* Filter Bar */
-    .filter-bar { display: flex; justify-content: center; margin-bottom: 20px; }
-    .filter-bar form { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-    .filter-bar input, .filter-bar select, .filter-bar button {
-        padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px;
-    }
-    .filter-bar button {
-        background: #015eac; color: #fff; border: none; cursor: pointer; transition: 0.3s;
-    }
-    .filter-bar button:hover { background: #004d91; }
+.filter-bar form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
 
-    /* Table */
-    .table-container {
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        overflow: hidden;
-    }
-    table { width: 100%; border-collapse: collapse; }
-    th, td {
-        padding: 12px 15px; border-bottom: 1px solid #eee;
-        text-align: left; font-size: 0.95rem;
-    }
-    thead th {
-        background: #f0f0f0;
-        font-weight: bold;
-        position: sticky; top: 0;
-    }
+.filter-bar input,
+.filter-bar select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  min-width: 180px;
+}
 
-    .status {
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-weight: bold;
-        display: inline-block;
-        text-align: center;
-        min-width: 90px;
-    }
-    .Booked { background-color: #f5b914; color: #000; }
-    .Cancelled { background-color: #e74c3c; color: #fff; }
-    .Completed { background-color: #2ecc71; color: #fff; }
+.filter-bar button {
+  background-color: #015eac;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-weight: 500;
+}
 
-    .actions a {
-        margin-right: 10px;
-        text-decoration: none;
-        font-size: 1.2rem;
-    }
-    .actions a.edit { color: #015eac; }
-    .actions a.delete { color: #f31026; }
+.filter-bar button:hover {
+  background-color: #004d91;
+}
 
-    @media(max-width: 768px) {
-        table, thead, tbody, th, td, tr { display: block; }
-        th { display: none; }
-        td {
-            display: flex; justify-content: space-between; border-bottom: 1px solid #ddd;
-            padding: 10px;
-        }
-        td::before {
-            content: attr(data-label);
-            font-weight: bold;
-            color: #015eac;
-        }
-    }
+/* Table */
+.table-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(6, 18, 32, 0.08);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #015eac;
+  color: #fff;
+}
+
+th, td {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+  background-color: #f9fbff;
+  transition: 0.3s ease;
+}
+
+/* Status Styles */
+.status {
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.Booked { background-color: #f5b91433; color: #b57d00; }
+.Cancelled { background-color: #ffdddd; color: #d63031; }
+.Completed { background-color: #d2f8e4; color: #2e7d32; }
+
+/* Actions */
+.actions a {
+  margin-right: 10px;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.actions a:hover {
+  transform: scale(1.2);
+}
+
+.actions a.edit { color: #015eac; }
+.actions a.delete { color: #f31026; }
+
+/* Responsive Table */
+@media(max-width: 768px) {
+  table, thead, tbody, th, td, tr { display: block; width: 100%; }
+  thead { display: none; }
+  tr { margin-bottom: 15px; background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+  td {
+    display: flex; justify-content: space-between;
+    padding: 12px 16px; border: none;
+  }
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #015eac;
+  }
+}
 </style>
 
 <script>
 function confirmDelete(id) {
-    if (confirm("Are you sure you want to cancel this appointment?")) {
-        window.location.href = "cancel_appointment.php?id=" + id;
-    }
+  if (confirm("Are you sure you want to cancel this appointment?")) {
+    window.location.href = "my_appointments.php?cancel_id=" + id;
+  }
 }
 </script>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo">
-        <img src="../images/nav-logo.png" alt="logo">
-        <h1>My Appointments</h1>
-    </div>
-    <a href="../auth/logout.php" class="logout">Logout</a>
-</div>
+<header>
+  <div class="logo">
+    <a href="home.php">
+      <img class="nav-img" src="../images/nav-logo.png" alt="">
+      <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
+    </a>
+  </div>
+  <nav>
+    <a href="../auth/logout.php" class="btn-login">Logout</a>
+  </nav>
+</header>
 
-<!-- Filter Bar -->
-<div class="filter-bar">
+<main>
+  <h2 style="text-align:center; margin-bottom:25px; color:#0b2236;">My Appointments</h2>
+
+  <?php if (isset($_GET['cancel']) && $_GET['cancel'] === 'success'): ?>
+    <p style="text-align:center; color:green; font-weight:600;">Appointment cancelled successfully.</p>
+  <?php elseif (isset($_GET['cancel']) && $_GET['cancel'] === 'not_allowed'): ?>
+    <p style="text-align:center; color:red; font-weight:600;">You can only cancel booked appointments.</p>
+  <?php elseif (isset($_GET['cancel']) && $_GET['cancel'] === 'failed'): ?>
+    <p style="text-align:center; color:red; font-weight:600;">Failed to cancel appointment. Please try again.</p>
+  <?php endif; ?>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
     <form method="get">
-        <input type="text" name="search" placeholder="Search by Doctor or Patient Name" value="<?= htmlspecialchars($search) ?>">
-        <select name="status">
-            <option value="">Status</option>
-            <option value="Booked" <?= $statusFilter == 'Booked' ? 'selected' : '' ?>>Booked</option>
-            <option value="Completed" <?= $statusFilter == 'Completed' ? 'selected' : '' ?>>Completed</option>
-            <option value="Cancelled" <?= $statusFilter == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
-        </select>
-        <input type="date" name="date" value="<?= htmlspecialchars($dateFilter) ?>">
-        <select name="sort">
-            <option value="desc" <?= $sortOrder == 'desc' ? 'selected' : '' ?>>Newest First</option>
-            <option value="asc" <?= $sortOrder == 'asc' ? 'selected' : '' ?>>Oldest First</option>
-        </select>
-        <button type="submit">Filter</button>
+      <input type="text" name="search" placeholder="Search by Doctor or Patient Name" value="<?= htmlspecialchars($search) ?>">
+      <select name="status">
+        <option value="">Status</option>
+        <option value="Booked" <?= $statusFilter == 'Booked' ? 'selected' : '' ?>>Booked</option>
+        <option value="Completed" <?= $statusFilter == 'Completed' ? 'selected' : '' ?>>Completed</option>
+        <option value="Cancelled" <?= $statusFilter == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+      </select>
+      <input type="date" name="date" value="<?= htmlspecialchars($dateFilter) ?>">
+      <select name="sort">
+        <option value="desc" <?= $sortOrder == 'desc' ? 'selected' : '' ?>>Newest First</option>
+        <option value="asc" <?= $sortOrder == 'asc' ? 'selected' : '' ?>>Oldest First</option>
+      </select>
+      <button type="submit">Apply</button>
     </form>
-</div>
+  </div>
 
-<!-- Table -->
-<div class="table-container">
+  <!-- Appointments Table -->
+  <div class="table-container">
     <table>
-        <thead>
+      <thead>
+        <tr>
+          <th>Doctor Name</th>
+          <th>Patient Name</th>
+          <th>Gender</th>
+          <th>Address</th>
+          <th>Message</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php if ($appointments->num_rows > 0): ?>
+          <?php while ($row = $appointments->fetch_assoc()): ?>
             <tr>
-                <th>Doctor Name</th>
-                <th>Patient Name</th>
-                <th>Gender</th>
-                <th>Address</th>
-                <th>Message</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
+              <td data-label="Doctor"><?= htmlspecialchars($row['doctor_name']) ?></td>
+              <td data-label="Patient"><?= htmlspecialchars($row['patient_name']) ?></td>
+              <td data-label="Gender"><?= htmlspecialchars($row['gender']) ?></td>
+              <td data-label="Address"><?= htmlspecialchars($row['address']) ?></td>
+              <td data-label="Message"><?= htmlspecialchars($row['message']) ?></td>
+              <td data-label="Status">
+                <span class="status <?= htmlspecialchars($row['status']) ?>">
+                  <?= htmlspecialchars($row['status']) ?>
+                </span>
+              </td>
+              <td data-label="Date"><?= htmlspecialchars($row['appointment_date']) ?></td>
+              <td class="actions" data-label="Actions">
+                <a href="edit_appointment.php?id=<?= $row['appointment_id'] ?>" class="edit">✏️</a>
+                <?php if ($row['status'] === 'Booked'): ?>
+                  <a href="javascript:void(0);" onclick="confirmDelete(<?= $row['appointment_id'] ?>)" class="delete">🗑️</a>
+                <?php endif; ?>
+              </td>
             </tr>
-        </thead>
-        <tbody>
-            <?php if ($appointments->num_rows > 0): ?>
-                <?php while ($row = $appointments->fetch_assoc()): ?>
-                    <tr>
-                        <td data-label="Doctor"><?= htmlspecialchars($row['doctor_name']) ?></td>
-                        <td data-label="Patient"><?= htmlspecialchars($row['patient_name']) ?></td>
-                        <td data-label="Gender"><?= htmlspecialchars($row['gender']) ?></td>
-                        <td data-label="Address"><?= htmlspecialchars($row['address']) ?></td>
-                        <td data-label="Message"><?= htmlspecialchars($row['message']) ?></td>
-                        <td data-label="Status">
-                            <span class="status <?= htmlspecialchars($row['status']) ?>">
-                                <?= htmlspecialchars($row['status']) ?>
-                            </span>
-                        </td>
-                        <td data-label="Date"><?= htmlspecialchars($row['appointment_date']) ?></td>
-                        <td class="actions" data-label="Actions">
-                            <a href="view_appointment.php?id=<?= $row['appointment_id'] ?>" class="edit">✏️</a>
-                            <?php if ($row['status'] === 'Booked'): ?>
-                                <a href="javascript:void(0);" onclick="confirmDelete(<?= $row['appointment_id'] ?>)" class="delete">🗑️</a>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr><td colspan="8" style="text-align:center;">No appointments found.</td></tr>
-            <?php endif; ?>
-        </tbody>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <tr><td colspan="8" style="text-align:center; padding:20px;">No appointments found.</td></tr>
+        <?php endif; ?>
+      </tbody>
     </table>
-</div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
+</footer>
 
 </body>
 </html>
