@@ -32,9 +32,9 @@
                 <div class="icon"><img src="../images/icons/hospital-bed.png" alt="bed"></div>
                 <div class="label">Book Bed</div>
             </a>
-            <a href="prescriptions.html" class="action-card">
+            <a href="my_appointments.php" class="action-card">
                 <div class="icon"><img src="../images/icons/prescription.png" alt="prescriptions"></div>
-                <div class="label">View Prescriptions</div>
+                <div class="label">My Appointments</div>
             </a>
             <a href="reports.html" class="action-card">
                 <div class="icon"><img src="../images/icons/report.png" alt="reports"></div>
