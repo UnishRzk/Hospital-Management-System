@@ -2,7 +2,6 @@
 // Include the database connection file
 include("../config/db.php");
 
-
 session_start();
 
 // Only allow logged-in patients to book
@@ -11,30 +10,24 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     exit();
 }
 
-$patient_id = $_SESSION['user_id'];
+// Use session user_id
+$user_id = $_SESSION['user_id'];
 
 // ------------------------------
 // Validate doctor_id from URL
 // ------------------------------
-
-// Check if doctor_id is missing
 if (!isset($_GET['doctor_id'])) {
-    http_response_code(400); // Bad Request
+    http_response_code(400);
     exit("Doctor ID is required.");
 }
-
-// Check if doctor_id is not a number
 if (!is_numeric($_GET['doctor_id'])) {
-    http_response_code(400); // Bad Request
+    http_response_code(400);
     exit("Invalid doctor ID.");
 }
-
-// Convert doctor_id safely to integer
 $doctor_id = (int) $_GET['doctor_id'];
 
-
 // ------------------------------
-// Fetch doctor info from database
+// Fetch doctor info
 // ------------------------------
 $stmt = $conn->prepare("
     SELECT doctor_id, name, email, department, designation, council_number, phone, photo
@@ -47,15 +40,13 @@ $result = $stmt->get_result();
 $doctor = $result->fetch_assoc();
 $stmt->close();
 
-// If no doctor found
 if (!$doctor) {
-    http_response_code(404); // Not Found
+    http_response_code(404);
     exit("Doctor not found.");
 }
 
-
 // ------------------------------
-// Fetch doctor education details
+// Fetch doctor education
 // ------------------------------
 $edu_stmt = $conn->prepare("
     SELECT degree, institution, year_of_completion
@@ -68,24 +59,24 @@ $edu_stmt->execute();
 $education = $edu_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $edu_stmt->close();
 
-
 // ------------------------------
-// Helper function for escaping output (XSS safe)
+// XSS safe output
 // ------------------------------
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-
 // ------------------------------
-// Determine doctor photo path
+// Doctor photo
 // ------------------------------
-$photoPath = "../images/doctor.png"; // Default photo if none provided
-
+$photoPath = "../images/doctor.png";
 if (!empty($doctor['photo'])) {
     $photoPath = "../images/doctors/" . e($doctor['photo']);
 }
 
+// ------------------------------
+// Handle form submit
+// ------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullname  = trim($_POST['fullname']);
     $phone     = trim($_POST['phone']);
@@ -94,27 +85,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $gender    = $_POST['gender'];
     $date      = $_POST['date'];
     $message   = trim($_POST['message']);
-  
 
     if ($fullname && $phone && $gender && $date) {
-    $stmt = $conn->prepare("
-        INSERT INTO appointments
-        (doctor_id, patient_id, patient_name, phone, email, address, gender, appointment_date, message)
-        VALUES (?,?,?,?,?,?,?,?,?)
-    ");
-    $stmt->bind_param(
-        "iisssssss",
-        $doctor_id,
-        $patient_id,
-        $fullname,
-        $phone,
-        $email,
-        $address,
-        $gender,
-        $date,
-        $message
-    );
-
+        $stmt = $conn->prepare("
+            INSERT INTO appointments
+            (doctor_id, user_id, patient_name, phone, email, address, gender, appointment_date, message)
+            VALUES (?,?,?,?,?,?,?,?,?)
+        ");
+        $stmt->bind_param(
+            "iisssssss",
+            $doctor_id,
+            $user_id,
+            $fullname,
+            $phone,
+            $email,
+            $address,
+            $gender,
+            $date,
+            $message
+        );
 
         if ($stmt->execute()) {
             $success = true;
@@ -127,20 +116,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Required fields missing.";
     }
 }
-
-
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dr. <?php echo e($doctor['name']); ?> — Profile</title>
-  <style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dr. <?php echo e($doctor['name']); ?> — Profile</title>
+<style>
+/* General Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* ===== Appointment Form Styling ===== */
+body {
+  font-family: Roboto, Segoe UI, sans-serif;
+  background: #cfe1f0;
+  color: #0b1e2d;
+  line-height: 1.5;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3%;
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #015eac;
+}
+
+.logo a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+}
+
+.nav-img {
+  height: 30px;
+  width: 40px;
+  margin-right: 6px;
+}
+
+nav a {
+  font-weight: 500;
+  color: #000;
+  text-decoration: none;
+  transition: color .3s, transform .2s;
+}
+
+nav a:hover {
+  color: #f31026;
+  transform: translateY(-2px);
+}
+
+.btn-login {
+  padding: .4rem 1rem;
+  border: 1px solid #015eac;
+  border-radius: 8px;
+  color: #015eac;
+  transition: .3s;
+}
+
+.btn-login:hover {
+  background: #f31026;
+  color: #fff;
+  border-color: #fff;
+}
+
+/* Form Container */
 .form-container {
   max-width: 900px;
   margin: 3rem auto;
@@ -158,6 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   font-weight: 800;
 }
 
+/* Form Fields */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -219,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   transform: translateY(-1px);
 }
 
-/* ===== Success Modal Styling ===== */
+/* Success Modal */
 .modal {
   display: none;
   position: fixed;
@@ -274,73 +333,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive adjustment */
-@media (max-width: 560px) {
-  .form-container {
-    padding: 1.5rem;
-  }
-  .form-container h2 {
-    font-size: 1.5rem;
-  }
-}
-
-
- body {
-      margin: 0;
-      font-family: Roboto, Segoe UI, sans-serif;
-      background: #cfe1f0;
-      color: #0b1e2d;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 3%;
-      background: #ffffffcc;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #015eac;
-    }
-    .logo a {
-      text-decoration: none;
-      color: inherit;
-    }
-    .nav-img {
-      height: 30px;
-      width: 40px;
-      margin-bottom: 7px;
-      vertical-align: middle;
-    }
-    nav a {
-      font-weight: 500;
-      color: #000;
-      text-decoration: none;
-      transition: color .3s, transform .2s;
-    }
-    nav a:hover {
-      color: #f31026;
-      transform: translateY(-2px);
-    }
-    .btn-login {
-      padding: .4rem 1rem;
-      border: 1px solid #015eac;
-      border-radius: 8px;
-      color: #015eac;
-      transition: .3s;
-    }
-    .btn-login:hover {
-      background: #f31026;
-      color: #fff;
-      border-color: #fff;
-    }
-    main {
+/* Profile Section */
+ main {
       min-height: calc(100vh - 100px);
       display: flex;
       justify-content: center;
@@ -400,116 +394,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-size: 1.1rem;
       line-height: 1.3;
     }
-    footer {
-      background: #015eac;
-      color: #fff;
-      text-align: center;
-      padding: .4rem;
-    }
-    .swasthya-color { color: #015eac; }
-    .track-color { color: #f31026; }
-    @media (max-width: 980px) {
-      .profile-content {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        text-align: center;
-        margin: 0 auto
-      }
-      .left-col{
-        justify-self: center;
-      }
-    }
-    @media (max-width: 560px) {
-      .photo { height: 300px; }
-      .name { font-size: 1.6rem; }
-      .designation-text { font-size: 1.05rem; }
-    }
-  </style>
 
+/* Footer */
+footer {
+  background: #015eac;
+  color: #fff;
+  text-align: center;
+  padding: .4rem;
+}
+
+.swasthya-color { color: #015eac; }
+.track-color { color: #f31026; }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .profile-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 560px) {
+  .photo { height: 300px; }
+  .name { font-size: 1.6rem; }
+  .designation-text { font-size: 1.05rem; }
+  .form-container { padding: 1.5rem; }
+  .form-container h2 { font-size: 1.5rem; }
+}
+</style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="logo">
-      <a href="#">
-        <img class="nav-img" src="../images/nav-logo.png" alt="Logo">
-        <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
-      </a>
-    </div>
-    <nav>
-      <a href="../auth/logout.php" class="btn-login">Logout</a>
-    </nav>
-  </header>
+<header>
+  <div class="logo">
+    <a href="#">
+      <img class="nav-img" src="../images/nav-logo.png" alt="Logo">
+      <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
+    </a>
+  </div>
+  <nav>
+    <a href="../auth/logout.php" class="btn-login">Logout</a>
+  </nav>
+</header>
+
 <div class="form-container">
-    <h2>Book Appointment</h2>
-    
-    <form id="appointmentForm" method="POST">
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="fullname">Full Name</label>
-                <input id="fullname" type="text" name="fullname" required>
-                <span class="error"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input id="phone" type="tel" name="phone" required pattern="^[0-9]{10}$" placeholder="10-digit number">
-                <span class="error"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input id="email" type="email" name="email" required>
-                <span class="error"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input id="address" type="text" name="address" required>
-                <span class="error"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="gender">Gender</label>
-                <select id="gender" name="gender" required>
-                    <option value="">Select Gender</option>
-                    <option>Male</option>
-                    <option>Female</option>
-                    <option>Other</option>
-                </select>
-                <span class="error"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="date">Pick a Date</label>
-                <input id="date" type="date" name="date" required>
-                <span class="error"></span>
-            </div>
-        </div>
-
-        <div class="form-group" style="margin-top:1rem;">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="3" placeholder="Briefly describe your concern..."></textarea>
-        </div>
-
-        <button type="submit" class="btn">Confirm Booking</button>
-    </form>
+  <h2>Book Appointment</h2>
+  <form id="appointmentForm" method="POST">
+      <div class="form-grid">
+          <div class="form-group">
+              <label for="fullname">Full Name</label>
+              <input id="fullname" type="text" name="fullname" required>
+              <span class="error"></span>
+          </div>
+          <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input id="phone" type="tel" name="phone" required pattern="^[0-9]{10}$" placeholder="10-digit number">
+              <span class="error"></span>
+          </div>
+          <div class="form-group">
+              <label for="email">Email</label>
+              <input id="email" type="email" name="email" required>
+              <span class="error"></span>
+          </div>
+          <div class="form-group">
+              <label for="address">Address</label>
+              <input id="address" type="text" name="address" required>
+              <span class="error"></span>
+          </div>
+          <div class="form-group">
+              <label for="gender">Gender</label>
+              <select id="gender" name="gender" required>
+                  <option value="">Select Gender</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+              </select>
+              <span class="error"></span>
+          </div>
+          <div class="form-group">
+              <label for="date">Pick a Date</label>
+              <input id="date" type="date" name="date" required>
+              <span class="error"></span>
+          </div>
+      </div>
+      <div class="form-group" style="margin-top:1rem;">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="3" placeholder="Briefly describe your concern..."></textarea>
+      </div>
+      <button type="submit" class="btn">Confirm Booking</button>
+  </form>
 </div>
 
-<!-- Modal -->
 <div class="modal" id="successModal">
-    <div class="modal-content">
-        <h3>Appointment Confirmed!</h3>
-        <p>Your booking has been successfully recorded. We’ll contact you shortly.</p>
-        <button id="closeModal">OK</button>
-    </div>
+  <div class="modal-content">
+      <h3>Appointment Confirmed!</h3>
+      <p>Your booking has been successfully recorded. We’ll contact you shortly.</p>
+      <button id="closeModal">OK</button>
+  </div>
 </div>
 
-
-  <!-- Main Profile Section -->
-  <main>
-    <div class="profile-wrapper">
+<main>
+  <div class="profile-wrapper">
       <div class="profile-content">
 
         <!-- Left Column (Photo + Name) -->
@@ -619,24 +605,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               ?>
             </div>
           </div>
-
         </section>
       </div>
     </div>
-  </main>
+</main>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
-  </footer>
+<footer>
+  <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
+</footer>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // Min date restriction
     const dateInput = document.getElementById('date');
     dateInput.min = new Date().toISOString().split("T")[0];
 
-    // Real-time validation
     document.querySelectorAll('input[required], select[required]').forEach(field => {
         field.addEventListener('input', () => {
             const error = field.nextElementSibling;
@@ -650,12 +632,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Show modal if PHP sets success
     <?php if (!empty($success)): ?>
-        document.getElementById('successModal').classList.add('active');
+      document.getElementById('successModal').classList.add('active');
     <?php endif; ?>
 
-    // Close modal
     document.getElementById('closeModal').addEventListener('click', () => {
         document.getElementById('successModal').classList.remove('active');
     });
