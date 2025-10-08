@@ -40,9 +40,9 @@
                 <div class="icon"><img src="../images/icons/report.png" alt="reports"></div>
                 <div class="label">View Reports</div>
             </a>
-            <a href="upload-report.html" class="action-card">
+            <a href="my_prescriptions.php" class="action-card">
                 <div class="icon"><img src="../images/icons/update-report.png" alt="upload"></div>
-                <div class="label">Upload Report</div>
+                <div class="label">My Prescriptions</div>
             </a>
             <a href="../pages/find-doctors.php" class="action-card">
                 <div class="icon"><img src="../images/icons/doctor.png" alt="doctor"></div>
