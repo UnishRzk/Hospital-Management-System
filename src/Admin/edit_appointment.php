@@ -41,28 +41,42 @@ function safe_html($value) {
 // HANDLE UPDATE REQUEST
 // ==========================
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $appointment_date = $_POST['appointment_date'] ?? '';
-    $status = $_POST['status'] ?? '';
-    $comment = trim($_POST['comment'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-
-    // Validate required fields
-    if (empty($appointment_date) || empty($status)) {
-        $error = "Appointment date and status are required.";
-    } else {
-        // Update appointment record securely
-        $update = $conn->prepare("
-            UPDATE appointments 
-            SET appointment_date = ?, status = ?, comment = ?, message = ?, updated_at = NOW() 
-            WHERE appointment_id = ?
-        ");
-        $update->bind_param("ssssi", $appointment_date, $status, $comment, $message, $appointment_id);
-
-        if ($update->execute()) {
-            header("Location: manage_appointments.php?update=success");
+    // DELETE FUNCTIONALITY
+    if (isset($_POST['delete'])) {
+        $delete = $conn->prepare("DELETE FROM appointments WHERE appointment_id = ?");
+        $delete->bind_param("i", $appointment_id);
+        if ($delete->execute()) {
+            header("Location: manage_appointments.php?delete=success");
             exit();
         } else {
-            $error = "Failed to update appointment. Please try again.";
+            $error = "Failed to delete appointment. Please try again.";
+        }
+    }
+
+    // UPDATE FUNCTIONALITY
+    elseif (isset($_POST['update'])) {
+        $appointment_date = $_POST['appointment_date'] ?? '';
+        $status = $_POST['status'] ?? '';
+        $comment = trim($_POST['comment'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        // Validate required fields
+        if (empty($appointment_date) || empty($status)) {
+            $error = "Appointment date and status are required.";
+        } else {
+            $update = $conn->prepare("
+                UPDATE appointments 
+                SET appointment_date = ?, status = ?, comment = ?, message = ?, updated_at = NOW() 
+                WHERE appointment_id = ?
+            ");
+            $update->bind_param("ssssi", $appointment_date, $status, $comment, $message, $appointment_id);
+
+            if ($update->execute()) {
+                header("Location: manage_appointments.php?update=success");
+                exit();
+            } else {
+                $error = "Failed to update appointment. Please try again.";
+            }
         }
     }
 }
@@ -85,7 +99,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         color: #333;
         min-height: 100vh;
     }
-
     .container {
         width: 100%;
         max-width: 700px;
@@ -95,7 +108,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-
     h1 {
         color: #015eac;
         margin-bottom: 25px;
@@ -103,18 +115,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         border-bottom: 3px solid #015eac;
         padding-bottom: 10px;
     }
-
     .form-group {
         margin-bottom: 20px;
     }
-
     label {
         font-weight: bold;
         color: #015eac;
         display: block;
         margin-bottom: 6px;
     }
-
     input[type="text"], input[type="date"], textarea, select {
         width: 100%;
         padding: 10px;
@@ -124,22 +133,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         outline: none;
         transition: 0.3s;
     }
-
     input:focus, textarea:focus, select:focus {
         border-color: #015eac;
     }
-
     textarea {
         resize: vertical;
         min-height: 80px;
     }
-
     .btn-container {
         display: flex;
         justify-content: space-between;
         margin-top: 25px;
     }
-
     .btn {
         padding: 10px 18px;
         border: none;
@@ -148,25 +153,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         font-weight: bold;
         transition: 0.3s;
     }
-
     .btn-primary {
         background: #015eac;
         color: #fff;
     }
-
     .btn-primary:hover {
         background: #004d91;
     }
-
     .btn-secondary {
         background: #e0e0e0;
         color: #333;
     }
-
     .btn-secondary:hover {
         background: #cacaca;
     }
-
+    .btn-danger {
+        background: #e74c3c;
+        color: #fff;
+    }
+    .btn-danger:hover {
+        background: #c0392b;
+    }
     .message {
         padding: 10px;
         margin-bottom: 15px;
@@ -174,12 +181,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         font-weight: bold;
         text-align: center;
     }
-
     .error {
         background: #ffe6e6;
         color: #c0392b;
     }
-
     .success {
         background: #e8f8f5;
         color: #27ae60;
@@ -195,7 +200,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="message error"><?= safe_html($error) ?></div>
     <?php endif; ?>
 
-    <form method="POST" onsubmit="return confirmUpdate();">
+    <form method="POST" onsubmit="return confirmUpdate(event);">
 
         <div class="form-group">
             <label>Patient Name</label>
@@ -233,19 +238,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <div class="form-group">
             <label>Doctor’s Comment</label>
-            <textarea name="comment" placeholder="Add any notes or updates..." disabled ><?= safe_html($appointment['comment']) ?></textarea>
+            <textarea name="comment" placeholder="Add any notes or updates..." disabled><?= safe_html($appointment['comment']) ?></textarea>
         </div>
 
         <div class="btn-container">
             <button type="button" class="btn btn-secondary" onclick="window.location.href='manage_appointments.php'">Cancel</button>
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="submit" name="delete" class="btn btn-danger" onclick="return confirmDelete();">Delete</button>
+            <button type="submit" name="update" class="btn btn-primary">Update</button>
         </div>
     </form>
 </div>
 
 <script>
-function confirmUpdate() {
-    return confirm("Are you sure you want to update this appointment?");
+function confirmUpdate(event) {
+    const updateClicked = event.submitter && event.submitter.name === 'update';
+    if (updateClicked) {
+        return confirm("Are you sure you want to update this appointment?");
+    }
+    return true;
+}
+
+function confirmDelete() {
+    return confirm("⚠️ Are you sure you want to permanently delete this appointment?");
 }
 </script>
 
