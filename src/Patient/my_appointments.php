@@ -2,52 +2,65 @@
 session_start();
 include("../config/db.php");
 
-// Restrict to logged-in patients only
+// Restrict to logged-in patients
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: ../auth/login.php");
     exit();
 }
 
-// Get patient_id from session user
+// Logged-in user_id
 $user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT patient_id FROM patients WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows === 0) {
-    die("Patient record not found.");
-}
-$patient_id = $result->fetch_assoc()['patient_id'];
 
-// ---------------- FILTER ----------------
+// ---------------- FILTERS ----------------
 $search = $_GET['search'] ?? '';
+$statusFilter = $_GET['status'] ?? '';
+$dateFilter = $_GET['date'] ?? '';
+$sortOrder = $_GET['sort'] ?? 'desc'; // default: newest first
 
 // ---------------- QUERY ----------------
-$sql = "SELECT a.appointment_id, a.patient_name, a.gender, a.address, a.message, 
+$sql = "SELECT a.appointment_id, a.patient_name, a.gender, a.address, a.message,
                a.status, a.appointment_date, d.name AS doctor_name
         FROM appointments a
         JOIN doctors d ON a.doctor_id = d.doctor_id
-        WHERE a.patient_id = ? 
-        AND (a.status = 'Booked' OR a.status = 'Cancelled')";
+        WHERE a.user_id = ?
+          AND (a.status = 'Booked' OR a.status = 'Cancelled' OR a.status = 'Completed')";
 
-$params = [$patient_id];
+$params = [$user_id];
 $types = "i";
 
+// Search by doctor/patient name
 if ($search !== '') {
-    $sql .= " AND (a.patient_name LIKE ? OR d.name LIKE ? OR a.address LIKE ?)";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
-    $types .= "sss";
+    $sql .= " AND (a.patient_name LIKE ? OR d.name LIKE ?)";
+    $searchTerm = "%$search%";
+    $params[] = $searchTerm;
+    $params[] = $searchTerm;
+    $types .= "ss";
 }
 
-$sql .= " ORDER BY a.appointment_date DESC";
+// Status filter
+if ($statusFilter !== '') {
+    $sql .= " AND a.status = ?";
+    $params[] = $statusFilter;
+    $types .= "s";
+}
+
+// Date filter
+if ($dateFilter !== '') {
+    $sql .= " AND DATE(a.appointment_date) = ?";
+    $params[] = $dateFilter;
+    $types .= "s";
+}
+
+// Sorting
+$orderSQL = ($sortOrder === 'asc') ? "ASC" : "DESC";
+$sql .= " ORDER BY a.appointment_date $orderSQL";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $appointments = $stmt->get_result();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,12 +78,8 @@ $appointments = $stmt->get_result();
     .header .logo {
         display: flex; align-items: center; gap: 8px;
     }
-    .header img {
-        width: 40px;
-    }
-    .header h1 {
-        color: #015eac; font-size: 1.4rem;
-    }
+    .header img { width: 40px; }
+    .header h1 { color: #015eac; font-size: 1.4rem; }
     .logout {
         background: #015eac; color: #fff; text-decoration: none;
         padding: 8px 15px; border-radius: 4px; transition: 0.3s;
@@ -78,18 +87,13 @@ $appointments = $stmt->get_result();
     .logout:hover { background: #004d91; }
 
     /* Filter Bar */
-    .filter-bar {
-        display: flex; justify-content: center; margin-bottom: 20px;
-    }
-    .filter-bar form {
-        display: flex; gap: 10px; flex-wrap: wrap;
-    }
-    .filter-bar input {
-        padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; width: 250px;
+    .filter-bar { display: flex; justify-content: center; margin-bottom: 20px; }
+    .filter-bar form { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .filter-bar input, .filter-bar select, .filter-bar button {
+        padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px;
     }
     .filter-bar button {
-        background: #015eac; color: #fff; border: none; padding: 8px 15px;
-        border-radius: 4px; cursor: pointer; transition: 0.3s;
+        background: #015eac; color: #fff; border: none; cursor: pointer; transition: 0.3s;
     }
     .filter-bar button:hover { background: #004d91; }
 
@@ -100,9 +104,7 @@ $appointments = $stmt->get_result();
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         overflow: hidden;
     }
-    table {
-        width: 100%; border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
     th, td {
         padding: 12px 15px; border-bottom: 1px solid #eee;
         text-align: left; font-size: 0.95rem;
@@ -113,7 +115,6 @@ $appointments = $stmt->get_result();
         position: sticky; top: 0;
     }
 
-    /* Status */
     .status {
         padding: 6px 10px;
         border-radius: 4px;
@@ -124,6 +125,15 @@ $appointments = $stmt->get_result();
     }
     .Booked { background-color: #f5b914; color: #000; }
     .Cancelled { background-color: #e74c3c; color: #fff; }
+    .Completed { background-color: #2ecc71; color: #fff; }
+
+    .actions a {
+        margin-right: 10px;
+        text-decoration: none;
+        font-size: 1.2rem;
+    }
+    .actions a.edit { color: #015eac; }
+    .actions a.delete { color: #f31026; }
 
     @media(max-width: 768px) {
         table, thead, tbody, th, td, tr { display: block; }
@@ -139,6 +149,14 @@ $appointments = $stmt->get_result();
         }
     }
 </style>
+
+<script>
+function confirmDelete(id) {
+    if (confirm("Are you sure you want to cancel this appointment?")) {
+        window.location.href = "cancel_appointment.php?id=" + id;
+    }
+}
+</script>
 </head>
 <body>
 
@@ -150,14 +168,26 @@ $appointments = $stmt->get_result();
     <a href="../auth/logout.php" class="logout">Logout</a>
 </div>
 
+<!-- Filter Bar -->
 <div class="filter-bar">
     <form method="get">
-        <input type="text" name="search" placeholder="Search by Doctor, Address, or Name" value="<?= htmlspecialchars($search) ?>">
-        <button type="submit">Search</button>
+        <input type="text" name="search" placeholder="Search by Doctor or Patient Name" value="<?= htmlspecialchars($search) ?>">
+        <select name="status">
+            <option value="">Status</option>
+            <option value="Booked" <?= $statusFilter == 'Booked' ? 'selected' : '' ?>>Booked</option>
+            <option value="Completed" <?= $statusFilter == 'Completed' ? 'selected' : '' ?>>Completed</option>
+            <option value="Cancelled" <?= $statusFilter == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+        </select>
+        <input type="date" name="date" value="<?= htmlspecialchars($dateFilter) ?>">
+        <select name="sort">
+            <option value="desc" <?= $sortOrder == 'desc' ? 'selected' : '' ?>>Newest First</option>
+            <option value="asc" <?= $sortOrder == 'asc' ? 'selected' : '' ?>>Oldest First</option>
+        </select>
+        <button type="submit">Filter</button>
     </form>
 </div>
-<?php echo "<pre>Patient ID: $patient_id</pre>";?>
 
+<!-- Table -->
 <div class="table-container">
     <table>
         <thead>
@@ -168,7 +198,8 @@ $appointments = $stmt->get_result();
                 <th>Address</th>
                 <th>Message</th>
                 <th>Status</th>
-                <th>Appointment Date</th>
+                <th>Date</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -186,10 +217,16 @@ $appointments = $stmt->get_result();
                             </span>
                         </td>
                         <td data-label="Date"><?= htmlspecialchars($row['appointment_date']) ?></td>
+                        <td class="actions" data-label="Actions">
+                            <a href="view_appointment.php?id=<?= $row['appointment_id'] ?>" class="edit">✏️</a>
+                            <?php if ($row['status'] === 'Booked'): ?>
+                                <a href="javascript:void(0);" onclick="confirmDelete(<?= $row['appointment_id'] ?>)" class="delete">🗑️</a>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endwhile; ?>
             <?php else: ?>
-                <tr><td colspan="7" style="text-align:center;">No appointments found.</td></tr>
+                <tr><td colspan="8" style="text-align:center;">No appointments found.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
