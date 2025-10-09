@@ -28,7 +28,7 @@
                 <div class="icon"><img src="../images/icons/dates.png" alt="calendar"></div>
                 <div class="label">Book Appointment</div>
             </a>
-            <a href="book-bed.html" class="action-card">
+            <a href="bed_type.php" class="action-card">
                 <div class="icon"><img src="../images/icons/hospital-bed.png" alt="bed"></div>
                 <div class="label">Book Bed</div>
             </a>
