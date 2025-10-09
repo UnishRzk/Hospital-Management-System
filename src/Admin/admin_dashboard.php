@@ -192,6 +192,7 @@ $totalNurses = $conn->query("SELECT COUNT(*) AS total FROM nurses")->fetch_assoc
     <a href="create_user.php">Add Users</a>
     <a href="manage_users.php">Manage Users</a>
     <a href="manage_appointments.php">Manage Appointments</a>
+    <a href="manage_beds.php">Manage Beds</a>
     <a href="../auth/logout.php">Logout</a>
   </div>
 
