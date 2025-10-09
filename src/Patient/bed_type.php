@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li><span class="tick">✔</span> Attached Bathroom</li>
                         <li><span class="tick">✔</span> Personal TV</li>
                     </ul>
-                    <form method="POST" action="book_bed.php">
+                    <form method="POST" action="book_bed_private.php">
                         <input type="hidden" name="bed_type" value="private">
                         <button type="submit" class="btn-select">Select this Room</button>
                     </form>
@@ -251,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li><span class="tick">✔</span> AC</li>
                         <li><span class="tick">✔</span> Shared Bathroom</li>
                     </ul>
-                    <form method="POST" action="book_bed.php">
+                    <form method="POST" action="book_bed_semiprivate.php">
                         <input type="hidden" name="bed_type" value="semi-private">
                         <button type="submit" class="btn-select">Select this Room</button>
                     </form>
@@ -266,7 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li><span class="tick">✔</span> WiFi</li>
                         <li><span class="tick">✔</span> Shared Bathroom</li>
                     </ul>
-                    <form method="POST" action="book_bed.php">
+                    <form method="POST" action="book_bed_general.php">
                         <input type="hidden" name="bed_type" value="general">
                         <button type="submit" class="btn-select">Select this Room</button>
                     </form>
