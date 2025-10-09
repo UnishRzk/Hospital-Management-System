@@ -36,9 +36,9 @@
                 <div class="icon"><img src="../images/icons/prescription.png" alt="prescriptions"></div>
                 <div class="label">My Appointments</div>
             </a>
-            <a href="reports.html" class="action-card">
+            <a href="my_bed_bookings.php" class="action-card">
                 <div class="icon"><img src="../images/icons/report.png" alt="reports"></div>
-                <div class="label">View Reports</div>
+                <div class="label">My Reservation</div>
             </a>
             <a href="my_prescriptions.php" class="action-card">
                 <div class="icon"><img src="../images/icons/update-report.png" alt="upload"></div>
