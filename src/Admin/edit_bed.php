@@ -43,7 +43,6 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Extract safely
     $patient_name = trim($_POST['patient_name'] ?? '');
     $contact = trim($_POST['contact'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -54,9 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status'] ?? '';
     $gender = !empty($_POST['gender']) ? $_POST['gender'] : $bed['gender'];
 
-    // ==========================
-    // VALIDATION LOGIC
-    // ==========================
     $valid_genders = ['male', 'female', 'other'];
     $valid_types = ['General', 'Semi-Private', 'Private'];
     $valid_status = ['Empty', 'Reserved', 'Occupied', 'Out of Order'];
@@ -69,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Invalid gender selected.";
     }
 
-    // Validate fields only if status = Reserved or Occupied
     if (!$error && ($status === 'Reserved' || $status === 'Occupied')) {
         if ($patient_name === '' || $contact === '' || $gender === '' || $reserved_date === '') {
             $error = "Please fill all required patient details.";
@@ -81,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // ==========================
-    // CLEAR PATIENT DETAILS IF STATUS IS EMPTY OR OUT OF ORDER
+    // CLEAR ALL PATIENT DETAILS IF STATUS = EMPTY or OUT OF ORDER
     // ==========================
     if (!$error && (strtolower($status) === 'empty' || strtolower($status) === 'out of order')) {
         $patient_name = null;
@@ -91,6 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $reason_for_admission = null;
         $reserved_date = null;
         $gender = null;
+        $user_id = null;
+    } else {
+        $user_id = $bed['user_id']; // retain if not clearing
     }
 
     // ==========================
@@ -100,6 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("
             UPDATE beds 
             SET 
+                user_id = ?, 
                 patient_name = ?, 
                 gender = ?, 
                 contact = ?, 
@@ -113,7 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
 
         $stmt->bind_param(
-            "sssssssssi",
+            "isssssssssi",
+            $user_id,
             $patient_name,
             $gender,
             $contact,
@@ -137,7 +137,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Escape helper
 function e($val) {
     return htmlspecialchars((string) $val, ENT_QUOTES, 'UTF-8');
 }
@@ -306,7 +305,6 @@ const statusSelect = document.getElementById('statusSelect');
 const form = document.getElementById('bedForm');
 const patientFields = form.querySelectorAll('input[name="patient_name"], input[name="contact"], input[name="email"], input[name="address"], textarea[name="reason_for_admission"], input[name="reserved_date"], select[name="gender"]');
 
-// Toggle disable based on status
 function togglePatientFields() {
   const status = statusSelect.value.toLowerCase();
   const disable = status === 'empty' || status === 'out of order';
@@ -317,10 +315,8 @@ function togglePatientFields() {
   });
 }
 
-// Client-side validation
 function validateForm() {
   const status = statusSelect.value.toLowerCase();
-
   if (status === 'reserved' || status === 'occupied') {
     const name = form.patient_name.value.trim();
     const contact = form.contact.value.trim();
@@ -344,12 +340,11 @@ function validateForm() {
       return false;
     }
   }
-
   return true;
 }
 
 statusSelect.addEventListener('change', togglePatientFields);
-togglePatientFields(); // Run on load
+togglePatientFields();
 </script>
 
 </body>
