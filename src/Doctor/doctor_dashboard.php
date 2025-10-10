@@ -21,8 +21,8 @@ $search = $_GET['search'] ?? '';
 $statusFilter = $_GET['status'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 
-// Query appointments
-$sql = "SELECT appointment_id, patient_name, gender, message, status, appointment_date
+// Query appointments (includes patient user_id)
+$sql = "SELECT appointment_id, patient_name, gender, message, status, appointment_date, user_id
         FROM appointments
         WHERE doctor_id = ?";
 $params = [$doctor_id];
@@ -60,11 +60,9 @@ $appointments = $stmt->get_result();
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Appointments | Doctor Panel</title>
 <style>
-  /* ===== Base ===== */
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
   body { display: flex; height: 100vh; background: #f9f9fb; }
 
-  /* ===== Sidebar ===== */
   .sidebar {
     width: 250px; background: #015eac; color: #fff; padding: 20px 0;
     display: flex; flex-direction: column; align-items: center;
@@ -78,10 +76,8 @@ $appointments = $stmt->get_result();
     background: #004d91; border-left: 4px solid #fff;
   }
 
-  /* ===== Main ===== */
   .main { flex: 1; padding: 20px; overflow-y: auto; }
 
-  /* ===== Topbar ===== */
   .topbar {
     background: #fff; padding: 15px 20px; margin-bottom: 20px;
     border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
@@ -89,7 +85,6 @@ $appointments = $stmt->get_result();
   }
   .topbar h1 { color: #015eac; font-size: 1.6rem; }
 
-  /* ===== Filter Bar ===== */
   .filter-bar form { display: flex; gap: 10px; flex-wrap: wrap; }
   .filter-bar input, .filter-bar select, .filter-bar button {
     padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px;
@@ -100,13 +95,11 @@ $appointments = $stmt->get_result();
   }
   .filter-bar button:hover { background: #004d91; }
 
-  /* ===== Table ===== */
   .table-container { max-height: 500px; overflow-y: auto; border-radius: 8px; }
   table { border-collapse: collapse; width: 100%; background: #fff; border-radius: 8px; }
   th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; }
   thead th { background: #f0f0f0; position: sticky; top: 0; }
 
-  /* ===== Buttons ===== */
   .btn {
     display: inline-block; padding: 8px 12px; border-radius: 4px;
     background: #015eac; color: #fff; text-decoration: none; font-size: 0.9rem;
@@ -114,15 +107,9 @@ $appointments = $stmt->get_result();
   }
   .btn:hover { background: #004d91; }
 
-  /* ===== Status Labels ===== */
   .status {
-    padding: 6px 10px;
-    border-radius: 4px;
-    color: #fff;
-    font-weight: bold;
-    text-align: center;
-    display: inline-block;
-    min-width: 90px;
+    padding: 6px 10px; border-radius: 4px; color: #fff; font-weight: bold;
+    text-align: center; display: inline-block; min-width: 90px;
   }
   .status.Booked { background-color: #f5b914; color: #000; }
   .status.Completed { background-color: #2ecc71; }
@@ -132,7 +119,6 @@ $appointments = $stmt->get_result();
 
 <body>
 
-<!-- Sidebar -->
 <div class="sidebar">
   <h2>Doctor Panel</h2>
   <a href="#">Dashboard</a>
@@ -140,7 +126,6 @@ $appointments = $stmt->get_result();
   <a href="../auth/logout.php">Logout</a>
 </div>
 
-<!-- Main Content -->
 <div class="main">
   <div class="topbar">
     <h1>Appointment Management</h1>
@@ -159,7 +144,6 @@ $appointments = $stmt->get_result();
     </div>
   </div>
 
-  <!-- Appointments Table -->
   <div class="table-container">
     <table>
       <thead>
@@ -170,6 +154,7 @@ $appointments = $stmt->get_result();
           <th>Status</th>
           <th>Date</th>
           <th>Actions</th>
+          <th>Reports</th>
         </tr>
       </thead>
       <tbody>
@@ -187,10 +172,11 @@ $appointments = $stmt->get_result();
               </td>
               <td><?= htmlspecialchars($row['appointment_date']) ?></td>
               <td><a href="viewmore.php?id=<?= $row['appointment_id'] ?>" class="btn">View More</a></td>
+              <td><a href="user_report.php?user_id=<?= $row['user_id'] ?>" class="btn">View Report</a></td>
             </tr>
           <?php endwhile; ?>
         <?php else: ?>
-          <tr><td colspan="6">No appointments found</td></tr>
+          <tr><td colspan="7">No appointments found</td></tr>
         <?php endif; ?>
       </tbody>
     </table>
