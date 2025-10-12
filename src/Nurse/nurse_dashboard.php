@@ -14,7 +14,7 @@ if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     $stmt = $conn->prepare("DELETE FROM appointments WHERE appointment_id = ?");
     $stmt->bind_param("i", $delete_id);
     $stmt->execute();
-    header("Location: manage_appointment.php");
+    header("Location: nurse_dashboard.php");
     exit();
 }
 
@@ -135,8 +135,8 @@ function confirmDelete(id) {
 <!-- Sidebar -->
 <div class="sidebar">
   <h2>Nurse Panel</h2>
-  <a href="#">Upload Reports</a>
-  <a href="manage_appointment.php" class="active">Manage Appointments</a>
+  <a href="nurse_dashboard.php" class="active">Manage Appointments</a>
+  <a href="manage_reports.php">Upload Reports</a>
   <a href="../auth/logout.php">Logout</a>
 </div>
 

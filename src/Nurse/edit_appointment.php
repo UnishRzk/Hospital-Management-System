@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $delete = $conn->prepare("DELETE FROM appointments WHERE appointment_id = ?");
         $delete->bind_param("i", $appointment_id);
         if ($delete->execute()) {
-            header("Location: manage_appointments.php?delete=success");
+            header("Location: nurse_dashboard.php?delete=success");
             exit();
         } else {
             $error = "Failed to delete appointment. Please try again.";
@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $update->bind_param("ssssi", $appointment_date, $status, $comment, $message, $appointment_id);
 
             if ($update->execute()) {
-                header("Location: manage_appointments.php?update=success");
+                header("Location: nurse_dashboard.php?update=success");
                 exit();
             } else {
                 $error = "Failed to update appointment. Please try again.";
@@ -242,7 +242,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
 
         <div class="btn-container">
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='manage_appointments.php'">Cancel</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='nurse_dashboard.php'">Cancel</button>
             <button type="submit" name="delete" class="btn btn-danger" onclick="return confirmDelete();">Delete</button>
             <button type="submit" name="update" class="btn btn-primary">Update</button>
         </div>
