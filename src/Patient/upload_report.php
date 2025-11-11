@@ -107,16 +107,35 @@ header {
     margin-bottom: 7px;
     vertical-align: middle;
 }
-.btn-login {
-    padding: 0.4rem 1rem;
-    border: 1px solid #015eac;
-    border-radius: 8px;
-    color: #015eac;
-    transition: 0.3s;
+nav {
+  display: flex;
+  gap: 24px;
+  align-items: center;
 }
+
+nav a {
+  font-weight: 500;
+  color: #000;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+nav a:hover {
+  color: #f31026;
+  transform: translateY(-2px);
+}
+
+.btn-login {
+  padding: 6px 16px;
+  border: 1px solid #015eac;
+  border-radius: 8px;
+  color: #015eac;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
 .btn-login:hover {
-    background: #2d6cdf;
-    color: #fff;
+  background-color: #f31026;
+  border-color: #fff;
+  color: #fff;
 }
 
 /* Upload Section */
@@ -239,7 +258,14 @@ footer {
         </a>
     </div>
     <nav>
-        <a href="../auth/logout.php" class="btn-login">Logout</a>
+        <!-- <a href="patient_dashboard.php">Home</a> -->
+        <!-- <a href="book_appointment.php">Book Appointment</a> -->
+        <!-- <a href="my_appointments.php">Appointments</a> -->
+        <!-- <a href="bed_type.php">Book Bed</a> -->
+        <!-- <a href="my_bed_bookings.php">Bed Reservations</a> -->
+        <!-- <a href="my_prescriptions.php">Prescriptions</a> -->
+        <!-- <a href="my_reports.php">Reports</a> -->
+        <a href="my_reports.php" class="btn-login">Back</a>
     </nav>
 </header>
 

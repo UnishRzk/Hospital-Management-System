@@ -35,13 +35,20 @@ while ($row = $result->fetch_assoc()) {
 <body>
   <header>
     <div class="logo">
-      <a href="#">
+      <a href="patient_dashboard.php">
         <img class="nav-img" src="../images/nav-logo.png" alt="SwasthyaTrack Logo">
         <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
       </a>
     </div>
     <nav>
-      <a href="../auth/logout.php" class="btn-login">Logout</a>
+        <a href="patient_dashboard.php">Home</a>
+        <!-- <a href="#About">Book Appointment</a> -->
+        <a href="my_appointments.php">Appointments</a>
+        <a href="bed_type.php">Book Bed</a>
+        <!-- <a href="#About">Bed Reservations</a> -->
+        <!-- <a href="my_prescriptions.php">Prescriptions</a> -->
+        <a href="my_reports.php">Reports</a>
+      <a href="patient_dashboard.php" class="btn-login">Back</a>
     </nav>
   </header>
 

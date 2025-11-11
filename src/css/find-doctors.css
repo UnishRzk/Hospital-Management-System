@@ -42,16 +42,17 @@ header {
             gap: 1.5rem;
         }
 
-        nav a {
-            font-weight: 500;
-            color: #000000;
-            transition: color 0.3s, transform 0.2s;
-        }
+nav a {
+  font-weight: 500;
+  color: #000;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
 
-        nav a:hover {
-            color: #f31026;
-            transform: translateY(-2px);
-        }
+nav a:hover {
+  color: #f31026;
+  transform: translateY(-2px);
+}
     .btn-login {
       padding: 0.4rem 1rem;
       border: 1px solid #015eac;

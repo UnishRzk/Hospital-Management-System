@@ -113,13 +113,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <header>
   <div class="logo">
-    <a href="#">
+    <a href="patient_dashboard.php">
       <img class="nav-img" src="../images/nav-logo.png" alt="Logo">
       <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
     </a>
   </div>
   <nav>
-    <a href="../auth/logout.php" class="btn-login">Logout</a>
+    <a href="bed_type.php" class="btn-login">Back</a>
   </nav>
 </header>
 

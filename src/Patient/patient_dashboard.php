@@ -38,13 +38,21 @@ $stmt->close();
 <body>
 <header>
     <div class="logo">
-        <a href="home.php">
+        <a href="patient_dashboard.php">
             <img class="nav-img" src="../images/nav-logo.png" alt="">
             <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
         </a>
     </div>
     <nav>
+        <a href="patient_dashboard.php">Home</a>
+         <!-- <a href="#About">Book Appointment</a>
+        <a href="#About">Book Bed</a> -->
+        <a href="my_appointments.php">Appointments</a>
+        <!-- <a href="#About">Bed Reservations</a> -->
+        <a href="my_prescriptions.php">Prescriptions</a>
+        <a href="my_reports.php">Reports</a>
         <a href="../auth/logout.php" class="btn-login">Logout</a>
+
     </nav>
 </header>
 
@@ -67,7 +75,7 @@ $stmt->close();
             </a>
             <a href="my_bed_bookings.php" class="action-card">
                 <div class="icon"><img src="../images/icons/report.png" alt="reports"></div>
-                <div class="label">My Reservation</div>
+                <div class="label">Bed Reservations</div>
             </a>
             <a href="my_prescriptions.php" class="action-card">
                 <div class="icon"><img src="../images/icons/update-report.png" alt="upload"></div>

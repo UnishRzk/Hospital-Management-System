@@ -187,14 +187,14 @@ textarea {
 <body>
 <header>
     <div class="logo">
-        <a href="home.php">
+        <a href="patient_dashboard.php">
             <img class="nav-img" src="../images/nav-logo.png" alt="">
             <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
         </a>
     </div>
     <nav>
         <a href="my_appointments.php" class="btn-login">Back</a>
-        <a href="../auth/logout.php" class="btn-login">Logout</a>
+        <!-- <a href="../auth/logout.php" class="btn-login">Logout</a> -->
     </nav>
 </header>
 

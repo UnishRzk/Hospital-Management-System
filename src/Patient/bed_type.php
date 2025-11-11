@@ -211,7 +211,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </a>
     </div>
     <nav>
-        <a href="../auth/logout.php" class="btn-login">Logout</a>
+            <a href="patient_dashboard.php">Home</a>
+        <a href="book_appointment.php">Book Appointment</a>
+        <a href="my_appointments.php">Appointments</a>
+        <!-- <a href="bed_type.php">Book Bed</a> -->
+        <!-- <a href="#About">Bed Reservations</a> -->
+        <!-- <a href="my_prescriptions.php">Prescriptions</a> -->
+        <a href="my_reports.php">Reports</a>
+        <a href="patient_dashboard.php" class="btn-login">Back</a>
     </nav>
 </header>
 

@@ -166,23 +166,43 @@ header {
   align-items: center;
 }
 
-.nav-img {
-  height: 30px;
-  width: 40px;
-  margin-right: 6px;
-}
+.nav-img{
+            height: 30px;
+            width: 40px;
+            margin-bottom: 7px;
+            vertical-align: middle;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
 
 nav a {
   font-weight: 500;
   color: #000;
   text-decoration: none;
-  transition: color .3s, transform .2s;
+  transition: color 0.3s ease, transform 0.2s ease;
 }
 
 nav a:hover {
   color: #f31026;
   transform: translateY(-2px);
 }
+    .btn-login {
+      padding: 0.4rem 1rem;
+      border: 1px solid #015eac;
+      border-radius: 8px;
+      color: #015eac;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+    .btn-login:hover {
+      background: #f31026;
+      color: #fff;
+      border-color: #fff;
+    }
 
 .btn-login {
   padding: .4rem 1rem;
@@ -428,13 +448,20 @@ footer {
 
 <header>
   <div class="logo">
-    <a href="#">
+    <a href="patient_dashboard.php">
       <img class="nav-img" src="../images/nav-logo.png" alt="Logo">
       <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
     </a>
   </div>
   <nav>
-    <a href="../auth/logout.php" class="btn-login">Logout</a>
+    <a href="patient_dashboard.php">Home</a>
+        <!-- <a href="#About">Book Appointment</a> -->
+        <a href="my_appointments.php">Appointments</a>
+        <a href="bed_type.php">Book Bed</a>
+        <!-- <a href="#About">Bed Reservations</a> -->
+        <!-- <a href="my_prescriptions.php">Prescriptions</a> -->
+        <a href="my_reports.php">Reports</a>
+    <a href="book_appointment.php" class="btn-login">Back</a>
   </nav>
 </header>
 
