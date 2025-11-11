@@ -1,3 +1,32 @@
+<?php
+session_start();
+require_once '../config/db.php'; // adjust this if your DB connection file path differs
+
+// Ensure user is logged in and user_id exists
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+$first_name = "User"; // Default fallback
+
+// Fetch user's full name from patients table
+$query = "SELECT name FROM patients WHERE user_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result && $row = $result->fetch_assoc()) {
+    $full_name = trim($row['name']);
+    // Extract only the first name
+    $name_parts = explode(" ", $full_name);
+    $first_name = ucfirst($name_parts[0]);
+}
+
+$stmt->close();
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -52,7 +81,7 @@
 
         <aside class="greeting">
             <img src="../images/veterinarian.png" alt="Doctor illustration">
-            <h2>Hi User!</h2>
+            <h2>Hi <?php echo htmlspecialchars($first_name); ?>!</h2>
             <p>Welcome back — here's your quick access panel.</p>
         </aside>
     </section>

@@ -1,0 +1,42 @@
+004f485 added a feature where nurse can upload reports for patients and Fixed some bugs
+94c5240 created module for nurse to manage appointmnets
+3ec0e67 doctors can now view their patient's reports
+1753b9f fixed a bug where the user_id was not cleared from database
+5a44a78 made module where the user can manage their reports
+d0f1cde users can now view,edit,cancel their bed bookings
+9b7bfbd users can now book beds
+9802156 Refactor code structure for improved readability and maintainability
+6af2079 added bed management module for admin
+511f9d7 added a module for user to view prescriptions
+1ddc393 added a option where patients can edit their appointments
+feae087 added a feature where patients can view their appointments
+4d67b59 fixed a bug where patient_id was being referred as user_id
+38b49af my appointments feature added
+027bf5e search by doctor name added
+5e84aa2 added delete feature for admin
+b978a33 Add appointment management functionality with access control and filtering
+c12c6dc Implement appointment management features including filtering, editing, and access control for doctors
+e2ec5c6 Enhance doctor dashboard and appointment booking functionality with improved session checks, user management, and form handling
+e24638f Add appointment booking functionality and doctor listing page
+13f4077 recovered some files
+5e9f815 Refactor code structure for improved readability and maintainability
+2278a06 Implement code changes to enhance functionality and improve performance
+7e57c4d Added a module that can manage users
+77fb08d Updated the dashboard
+6f1bebc Implement code changes to enhance functionality and improve performance
+90cb6b7 Implement multiple code changes for improved functionality and performance
+821e32c Refactor doctor profile page: enhance layout with improved photo display and add validation for doctor ID
+27e4b2c Refactor doctor profile page: streamline doctor fetching logic, enhance HTML structure, and improve XSS prevention measures
+067a023 Enhance doctor listing page: add sorting by name, improve HTML escaping for XSS prevention, and refine code structure for readability
+e477430 Refactor doctor profile page for improved readability and maintainability; enhance validation and output escaping
+28d3692 Refactor patient dashboard styles for improved consistency and responsiveness; remove unused about and services pages
+6f25ea0 Removed Unnecessary code
+4f82ee9 Refactor code structure for improved readability and maintainability
+87713f9 Add photo upload and education fields for doctor user creation
+08738ac Add doctor profile page and updated find doctors to include doctor_id
+6b83ca2 Add find-doctors.php page to display a list of doctors
+fd0a26b Made The Frontend of Patient Dashboard
+c15f3af Remove commented-out signup form HTML from signup.php
+0d411a0 Added SmoothScroll
+f6435a2 Made Login Signup Along With LAnding Page
+2f34799 Initial Commit
