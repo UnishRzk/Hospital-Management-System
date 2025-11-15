@@ -1,5 +1,12 @@
 <?php
+session_start();
 include("../config/db.php");
+
+// Restrict to logged-in patients
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
+    header("Location: ../auth/login.php");
+    exit();
+}
 
 // Fetch doctors
 $result = $conn->query("SELECT doctor_id, name, designation, photo FROM doctors ORDER BY name ASC");

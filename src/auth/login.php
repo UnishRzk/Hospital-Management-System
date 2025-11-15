@@ -1,6 +1,40 @@
 <?php
+
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: 0");
+
 session_start();
+
+// Force no caching — prevents browser from loading old pages
+
+
+// If user is already logged in, redirect them away from login page
+if (!empty($_SESSION['user_id']) && !empty($_SESSION['role'])) {
+
+    if ($_SESSION['role'] === 'patient') {
+        header("Location: ../Patient/patient_dashboard.php");
+        exit();
+    }
+    if ($_SESSION['role'] === 'doctor') {
+        header("Location: ../Doctor/doctor_dashboard.php");
+        exit();
+    }
+    if ($_SESSION['role'] === 'nurse') {
+        header("Location: ../Nurse/nurse_dashboard.php");
+        exit();
+    }
+    if ($_SESSION['role'] === 'admin') {
+        header("Location: ../Admin/admin_dashboard.php");
+        exit();
+    }
+}
+
+
 include("../config/db.php");
+
+$error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
@@ -42,6 +76,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <title>Login</title>
+    <script type="text/javascript">
+    // Prevent page caching and back navigation to login
+    window.history.forward();
+    
+    function preventBack() {
+        window.history.forward();
+    }
+    
+    setTimeout(preventBack, 0);
+    window.onunload = function() { null };
+    
+    // Clear form data when page is loaded
+    window.onload = function() {
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+        
+        // Clear any stored form data
+        const forms = document.getElementsByTagName('form');
+        for (let form of forms) {
+            form.reset();
+        }
+    };
+</script>
+    <!-- <script type="text/javascript">
+       function preventBack() {
+           window.history.forward();
+       }
+       setTimeout("preventBack()", 0);
+       window.onunload = function () { null };
+</script>
+<script type="text/javascript">
+    // Add a new state to the history stack
+    history.pushState(null, null, location.href);
+    
+    // Listen for the 'popstate' event (which fires on back/forward)
+    window.onpopstate = function () {
+        // When the user tries to go back, push them forward again
+        history.go(1);
+    };
+</script> -->
     <style>
         /* Reuse your existing theme */
         * {
@@ -246,4 +321,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 </div> -->
 </body>
+
 </html>
