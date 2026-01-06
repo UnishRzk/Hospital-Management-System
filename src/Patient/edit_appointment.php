@@ -355,6 +355,13 @@ function confirmUpdate() {
 
     return confirm("Do you want to update this appointment?");
 }
+(function () {
+    const dateInput = document.querySelector('[name="appointment_date"]');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    }
+})();
 </script>
 
 </body>
