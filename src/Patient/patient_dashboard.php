@@ -180,7 +180,7 @@ $stmt->close();
     </section>
 
     <!-- Specialities -->
-    <section class="specialities">
+    <!-- <section class="specialities">
         <div class="heading-row">
             <div class="pill">Specialities</div>
             <div class="special-title">Explore our Centres of Clinical Excellence</div>
@@ -204,7 +204,7 @@ $stmt->close();
                 <div>Neurology</div>
             </a>
         </div>
-    </section>
+    </section> -->
 </main>
 
 <footer>
