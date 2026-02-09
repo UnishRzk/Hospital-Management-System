@@ -103,7 +103,7 @@ tbody tr:hover { background-color: #f9fbff; transition: 0.3s ease; }
 
 <header>
   <div class="logo">
-    <a href="home.php">
+    <a href="patient_dashboard.php">
       <img class="nav-img" src="../images/nav-logo.png" alt="">
       <span class="swasthya-color">Swasthya</span><span class="track-color">Track</span>
     </a>
@@ -178,7 +178,7 @@ tbody tr:hover { background-color: #f9fbff; transition: 0.3s ease; }
 </main>
 
 <footer>
-  <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
+  <p>© 2026 SwasthyaTrack. All Rights Reserved.</p>
 </footer>
 
 </body>

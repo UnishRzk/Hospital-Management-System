@@ -331,7 +331,7 @@ function confirmCancel(id) {
 </main>
 
 <footer>
-    <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
+    <p>© 2026 SwasthyaTrack. All Rights Reserved.</p>
 </footer>
 
 </body>

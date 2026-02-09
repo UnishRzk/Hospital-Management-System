@@ -300,7 +300,7 @@ footer {
 </div>
 
 <footer>
-    <p>&copy; 2025 SwasthyaTrack. All Rights Reserved.</p>
+    <p>&copy; 2026 SwasthyaTrack. All Rights Reserved.</p>
 </footer>
 
 <script>

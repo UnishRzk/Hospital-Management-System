@@ -122,7 +122,7 @@ $appointments = $stmt->get_result();
 <div class="sidebar">
   <h2>Doctor Panel</h2>
   <a href="#">Dashboard</a>
-  <a href="manage_appointment.php" class="active">Manage Appointments</a>
+  <a href="doctor_dashboard.php" class="active">Manage Appointments</a>
   <a href="../auth/logout.php">Logout</a>
 </div>
 

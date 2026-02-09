@@ -638,7 +638,7 @@ footer {
 </main>
 
 <footer>
-  <p>© 2025 SwasthyaTrack. All Rights Reserved.</p>
+  <p>© 2026 SwasthyaTrack. All Rights Reserved.</p>
 </footer>
 
 <script>
