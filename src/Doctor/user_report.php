@@ -204,7 +204,7 @@ footer {
 </main>
 
 <footer>
-    © 2025 SwasthyaTrack. All Rights Reserved.
+    © 2026 SwasthyaTrack. All Rights Reserved.
 </footer>
 </body>
 </html>

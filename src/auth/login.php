@@ -622,7 +622,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </section>
 
     <footer>
-        <p>&copy; 2025 SwasthyaTrack. All Rights Reserved.</p>
+        <p>&copy; 2026 SwasthyaTrack. All Rights Reserved.</p>
     </footer>
 </body>
 </html>
