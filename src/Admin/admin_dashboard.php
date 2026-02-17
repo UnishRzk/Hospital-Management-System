@@ -3,8 +3,13 @@ session_start();
 include("../config/db.php"); // adjust path if needed
 
 // Role check
+// if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+//     die("Access denied. Only admins can view this page.");
+// }
+
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    die("Access denied. Only admins can view this page.");
+    header("Location: ../auth/login.php");
+    exit();
 }
 
 // Query counts

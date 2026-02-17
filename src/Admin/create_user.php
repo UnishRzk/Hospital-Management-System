@@ -6,8 +6,13 @@ session_start();
 include("../config/db.php");
 
 // Only allow admins to access this page
-if ($_SESSION['role'] != 'admin') {
-    die("Access denied. Only admins can create new users.");
+// if ($_SESSION['role'] != 'admin') {
+//     die("Access denied. Only admins can create new users.");
+// }
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../auth/login.php");
+    exit();
 }
 
 // Handle form submission when the form is submitted
