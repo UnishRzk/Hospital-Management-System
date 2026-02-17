@@ -2,22 +2,21 @@
 // Start the session to access session variables
 session_start();
 
-// --- Security Check ---
+// Security Check 
 // Redirect to login page if the user is not logged in or is not a patient.
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: ../auth/login.php");
-    exit(); // Stop script execution
+    exit(); 
 }
 
-// You can include your database connection here if needed for dynamic data
 // include("../config/db.php");
 
-// --- Helper function for XSS protection ---
+// Helper function for XSS protection 
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-// --- Handle Form Submission (Backend Logic) ---
+// Handle Form Submission (Backend Logic) 
 // This block will process the bed selection when a form is submitted.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bed_type = $_POST['bed_type'] ?? '';
@@ -25,13 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // --- Validation ---
     $allowed_bed_types = ['private', 'semi-private', 'general'];
     if (in_array($bed_type, $allowed_bed_types)) {
-        // --- TODO: Backend Processing ---
-        // 1. Check bed availability in the database.
-        // 2. Create a reservation record associated with the patient's ID ($_SESSION['user_id']).
-        // 3. Redirect to a confirmation/success page or display a message.
-
-        // For now, we'll just redirect to the dashboard with a success message.
-        // Replace this with your actual booking logic.
         header("Location: patient_dashboard.php?booking_status=success&type=" . e($bed_type));
         exit();
     } else {
@@ -50,9 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         /* --- Main Container for the Booking Page --- */
 .bed-booking-main {
-    padding: 2rem 1rem; /* Add some padding for spacing */
-    background-color: #f4f7f9; /* A light background color for the page */
-    min-height: calc(100vh - 120px); /* Ensure it takes up most of the screen height */
+    padding: 2rem 1rem; 
+    background-color: #f4f7f9; 
+    min-height: calc(100vh - 120px); 
 }
 
 .booking-container {
@@ -68,16 +60,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     text-align: center;
     font-size: 2rem;
     font-weight: 700;
-    color: #015eac; /* Using your primary blue color */
+    color: #015eac; 
     margin-bottom: 2.5rem;
 }
 
 /* --- Wrapper for the Bed Option Cards --- */
 .bed-options-wrapper {
     display: flex;
-    justify-content: center; /* Center cards horizontally */
-    gap: 2rem; /* Space between cards */
-    flex-wrap: wrap; /* Allow cards to wrap to the next line on smaller screens */
+    justify-content: center; 
+    gap: 2rem; 
+    flex-wrap: wrap; 
 }
 
 /* --- Styling for Each Bed Card --- */
@@ -85,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden; /* Ensures the image corners are rounded */
-    flex: 1 1 300px; /* Flex properties for responsive sizing */
+    overflow: hidden; 
+    flex: 1 1 300px; 
     max-width: 340px;
     display: flex;
     flex-direction: column;
@@ -94,14 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 .bed-card:hover {
-    transform: translateY(-8px); /* Lifts the card on hover */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Adds a more prominent shadow */
+    transform: translateY(-8px); 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); 
 }
 
 .bed-card img {
     width: 100%;
-    height: 200px; /* Fixed height for all images */
-    object-fit: cover; /* Ensures images cover the area without distortion */
+    height: 200px; 
+    object-fit: cover; 
     display: block;
 }
 
@@ -109,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Allows this section to grow, pushing the button to the bottom */
+    flex-grow: 1; 
 }
 
 .card-content h3 {
@@ -123,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     list-style: none;
     padding: 0;
     margin: 0 0 1.5rem 0;
-    flex-grow: 1; /* Pushes button down by taking available space */
+    flex-grow: 1; 
 }
 
 .card-content li {
@@ -135,17 +127,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 .tick {
-    color: #28a745; /* Green color for the checkmark */
+    color: #28a745; 
     font-weight: bold;
     margin-right: 10px;
 }
 
-/* --- Select Button Styling --- */
+
 .btn-select {
     display: block;
     width: 100%;
     padding: 0.75rem 1rem;
-    background-color: #015eac; /* Primary blue */
+    background-color: #015eac; 
     color: #fff;
     font-size: 1rem;
     font-weight: 600;
@@ -154,15 +146,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     cursor: pointer;
     text-align: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: auto; /* Pushes the button to the bottom of the card */
+    margin-top: auto; 
 }
 
 .btn-select:hover {
-    background-color: #f31026; /* Your brand's red color for hover */
+    background-color: #f31026; 
     transform: translateY(-2px);
 }
 
-/* --- Error Message Styling --- */
 .error-notice {
     text-align: center;
     background-color: #f8d7da;
@@ -174,7 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     max-width: 600px;
 }
 
-/* --- Responsive Design --- */
 @media (max-width: 768px) {
     .booking-container h2 {
         font-size: 1.8rem;
@@ -182,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .bed-card {
-        flex-basis: 80%; /* Cards take up more width on smaller screens */
+        flex-basis: 80%; 
     }
 }
 
@@ -196,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .bed-card {
-        flex-basis: 95%; /* Almost full width on mobile */
+        flex-basis: 95%; 
     }
 }
     </style>

@@ -1,14 +1,11 @@
 <?php
-// PHP logic from the user's provided code
 session_start();
 include("../config/db.php"); // Connect to MySQL database
 
-// --- XSS safe output function (required by the design structure) ---
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-// Ensure only logged-in patients can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: ../auth/login.php");
     exit();
@@ -18,8 +15,7 @@ $user_id = $_SESSION['user_id']; // Logged-in user's ID
 $success = "";
 $error = "";
 
-// --- MODIFICATION 1: Change 'Private' to 'Semi-Private' in the initial fetch ---
-// Step 1: Fetch all Semi-Private, empty beds
+
 $sql = "SELECT bed_id FROM beds WHERE status = 'Empty' AND type = 'Semi-Private'";
 $result = $conn->query($sql);
 
@@ -30,14 +26,12 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// Store POST data to repopulate form fields on error
 $form_data = [
     'bed_id' => '', 'patient_name' => '', 'gender' => '',
     'contact' => '', 'email' => '', 'address' => '',
     'reason_for_admission' => '', 'reserved_date' => ''
 ];
 
-// Step 2: Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Populate form_data and trim
     $form_data['bed_id'] = $_POST['bed_id'] ?? '';
@@ -53,8 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     extract($form_data);
 
     // Validate input
-    // NOTE: The user's original PHP logic had a required field validation that was empty: `$error = "";`. 
-    // I am fixing it to show a generic message, though client-side validation should cover this.
     if (!$bed_id || !$patient_name || !$gender || !$contact || !$reserved_date || !$reason_for_admission) {
          $error = "";
     } elseif (!preg_match('/^[0-9]{7,15}$/', $contact)) {
@@ -63,8 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Invalid email address format.";
     }
     else {
-        // --- MODIFICATION 2: Change 'Private' to 'Semi-Private' in the check query ---
-        // Step 3: Double-check that bed is still available and is Semi-Private
+  
         $check_sql = "SELECT bed_id FROM beds WHERE bed_id = ? AND status = 'Empty' AND type = 'Semi-Private'";
         $stmt = $conn->prepare($check_sql);
         $stmt->bind_param("i", $bed_id);
@@ -72,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $check_result = $stmt->get_result();
 
         if ($check_result->num_rows === 1) {
-            // Step 4: Reserve the bed (UPDATE logic remains the same, as the fields are correct)
             $update_sql = "UPDATE beds 
                             SET user_id = ?, patient_name = ?, gender = ?, contact = ?, email = ?, address = ?, 
                                 reason_for_admission = ?, reserved_date = ?, status = 'Reserved'
@@ -93,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($update_stmt->execute()) {
                 $success = "Bed successfully booked!";
-                // Refresh the list of available beds after booking
                 $available_beds = [];
             } else {
                 $error = "Database update failed. Please try again: " . $conn->error;

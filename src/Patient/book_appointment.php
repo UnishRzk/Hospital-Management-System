@@ -29,9 +29,9 @@ while ($row = $result->fetch_assoc()) {
   <title>Meet Our Doctors | SwasthyaTrack</title>
   <link rel="stylesheet" href="../css/find-doctors.css">
   <style>
-    /* Optional small UX enhancements */
     .doctor-card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, 
+      box-shadow 0.2s ease;
     }
     .doctor-card:hover {
       transform: scale(1.03);

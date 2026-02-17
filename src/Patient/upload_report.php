@@ -2,7 +2,7 @@
 session_start();
 include("../config/db.php");
 
-// --- Secure Output Function ---
+//  Secure Output Function
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
@@ -95,8 +95,12 @@ header {
     top: 0;
     z-index: 1000;
 }
-.swasthya-color { color: #015eac; }
-.track-color { color: #f31026; }
+.swasthya-color {
+     color: #015eac; 
+    }
+.track-color {
+     color: #f31026;
+     }
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
@@ -200,8 +204,17 @@ nav a:hover {
     font-size: 0.95rem;
     margin-bottom: 1rem;
 }
-.alert-success { background: #e6ffe6; color: #047a04; border: 1px solid #047a04; }
-.alert-error { background: #ffe6e6; color: #a10000; border: 1px solid #a10000; }
+.alert-success {
+     background: #e6ffe6; 
+     color: #047a04; 
+     border: 1px solid #047a04;
+     }
+.alert-error {
+     background: #ffe6e6; 
+     color: #a10000; 
+     border: 1px solid #a10000;
+     }
+
 
 /* Modal */
 .modal {

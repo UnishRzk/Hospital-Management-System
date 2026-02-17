@@ -13,9 +13,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
 // Use session user_id
 $user_id = $_SESSION['user_id'];
 
-// ------------------------------
 // Validate doctor_id from URL
-// ------------------------------
 if (!isset($_GET['doctor_id'])) {
     http_response_code(400);
     exit("Doctor ID is required.");
@@ -26,9 +24,7 @@ if (!is_numeric($_GET['doctor_id'])) {
 }
 $doctor_id = (int) $_GET['doctor_id'];
 
-// ------------------------------
 // Fetch doctor info
-// ------------------------------
 $stmt = $conn->prepare("
     SELECT doctor_id, name, email, department, designation, council_number, phone, photo
     FROM doctors
@@ -45,9 +41,7 @@ if (!$doctor) {
     exit("Doctor not found.");
 }
 
-// ------------------------------
 // Fetch doctor education
-// ------------------------------
 $edu_stmt = $conn->prepare("
     SELECT degree, institution, year_of_completion
     FROM doctor_education
@@ -59,24 +53,18 @@ $edu_stmt->execute();
 $education = $edu_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $edu_stmt->close();
 
-// ------------------------------
 // XSS safe output
-// ------------------------------
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-// ------------------------------
 // Doctor photo
-// ------------------------------
 $photoPath = "../images/doctor.png";
 if (!empty($doctor['photo'])) {
     $photoPath = "../images/doctors/" . e($doctor['photo']);
 }
 
-// ------------------------------
 // Handle form submit
-// ------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullname  = trim($_POST['fullname']);
     $phone     = trim($_POST['phone']);
@@ -349,8 +337,14 @@ nav a:hover {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }
 
 /* Profile Section */
@@ -423,8 +417,12 @@ footer {
   padding: .4rem;
 }
 
-.swasthya-color { color: #015eac; }
-.track-color { color: #f31026; }
+.swasthya-color { 
+  color: #015eac; 
+}
+.track-color { 
+  color: #f31026; 
+}
 
 /* Responsive */
 @media (max-width: 980px) {
@@ -436,11 +434,21 @@ footer {
 }
 
 @media (max-width: 560px) {
-  .photo { height: 300px; }
-  .name { font-size: 1.6rem; }
-  .designation-text { font-size: 1.05rem; }
-  .form-container { padding: 1.5rem; }
-  .form-container h2 { font-size: 1.5rem; }
+  .photo { 
+    height: 300px; 
+  }
+  .name { 
+    font-size: 1.6rem; 
+  }
+  .designation-text { 
+    font-size: 1.05rem; 
+}
+  .form-container { 
+    padding: 1.5rem;
+   }
+  .form-container h2 {
+     font-size: 1.5rem; 
+    }
 }
 </style>
 </head>

@@ -2,9 +2,7 @@
 session_start();
 include("../config/db.php");
 
-// ==========================
 // ACCESS CONTROL
-// ==========================
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: ../auth/login.php");
     exit();
@@ -12,9 +10,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
 
 $user_id = $_SESSION['user_id'];
 
-// ==========================
 // VALIDATE BED ID
-// ==========================
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: manage_beds.php");
     exit();
@@ -22,9 +18,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $bed_id = (int) $_GET['id'];
 
-// ==========================
 // FETCH BED DATA (must belong to user)
-// ==========================
 $stmt = $conn->prepare("SELECT * FROM beds WHERE bed_id = ? AND user_id = ?");
 $stmt->bind_param("ii", $bed_id, $user_id);
 $stmt->execute();
@@ -38,9 +32,7 @@ if ($result->num_rows === 0) {
 $bed = $result->fetch_assoc();
 $stmt->close();
 
-// ==========================
 // HANDLE FORM SUBMISSION
-// ==========================
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

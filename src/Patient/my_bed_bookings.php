@@ -2,9 +2,7 @@
 session_start();
 include("../config/db.php");
 
-// ============================
 // ACCESS CONTROL
-// ============================
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: ../auth/login.php");
     exit();
@@ -12,9 +10,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
 
 $user_id = $_SESSION['user_id'];
 
-// ============================
 // CANCEL BED LOGIC
-// ============================
 if (isset($_GET['cancel_bed_id']) && is_numeric($_GET['cancel_bed_id'])) {
     $cancel_bed_id = (int) $_GET['cancel_bed_id'];
 
@@ -52,18 +48,14 @@ if (isset($_GET['cancel_bed_id']) && is_numeric($_GET['cancel_bed_id'])) {
     }
 }
 
-// ============================
 // FILTERS
-// ============================
 $search = $_GET['search'] ?? '';
 $statusFilter = $_GET['status'] ?? '';
 $typeFilter = $_GET['type'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 $sortOrder = $_GET['sort'] ?? 'desc';
 
-// ============================
 // FETCH BED BOOKINGS
-// ============================
 $sql = "SELECT bed_id, patient_name, gender, address, reason_for_admission,
                reserved_date, type, status, created_at
         FROM beds
@@ -187,10 +179,21 @@ tbody tr:hover {
     font-size: 0.85rem;
     text-align: center;
 }
-.Empty { background-color: #f0f0f0; color: #666; }
-.Reserved { background-color: #f5b91433; color: #b57d00; }
-.Occupied { background-color: #d2f8e4; color: #2e7d32; }
-.Out\ of\ Order { background-color: #ffdddd; color: #d63031; }
+.Empty { 
+    background-color: #f0f0f0; 
+    color: #666; 
+}
+.Reserved {
+     background-color: #f5b91433; 
+     color: #b57d00; }
+.Occupied { 
+    background-color: #d2f8e4; 
+color: #2e7d32; 
+}
+.Out\ of\ Order { 
+    background-color: #ffdddd; 
+    color: #d63031; 
+}
 
 .actions a {
     margin-right: 10px;
@@ -198,17 +201,34 @@ tbody tr:hover {
     font-size: 1.1rem;
     transition: transform 0.2s ease;
 }
-.actions a:hover { transform: scale(1.2); }
-.actions a.edit { color: #015eac; }
-.actions a.delete { color: #f31026; }
+.actions a:hover { 
+    transform: scale(1.2); 
+}
+.actions a.edit { 
+    color: #015eac; 
+}
+.actions a.delete {
+     color: #f31026;
+     }
 
 @media(max-width: 768px) {
-    table, thead, tbody, th, td, tr { display: block; width: 100%; }
-    thead { display: none; }
-    tr { margin-bottom: 15px; background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    table, thead, tbody, th, td, tr {
+         display: block; width: 100%; 
+        }
+    thead { 
+        display: none; 
+    }
+    tr {
+         margin-bottom: 15px;
+          background: #fff; 
+          border-radius: 10px; 
+          box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+         }
     td {
-        display: flex; justify-content: space-between;
-        padding: 12px 16px; border: none;
+        display: flex; 
+        justify-content: space-between;
+        padding: 12px 16px; 
+        border: none;
     }
     td::before {
         content: attr(data-label);

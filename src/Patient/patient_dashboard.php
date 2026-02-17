@@ -9,14 +9,13 @@ session_start();
 
 require_once '../config/db.php';
 
-// Enforce login
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
 }
 
 $user_id = $_SESSION['user_id'];
-$first_name = "User"; // Default fallback
+$first_name = "User"; 
 
 // Fetch first name
 $query = "SELECT name FROM patients WHERE user_id = ?";
@@ -44,7 +43,7 @@ $stmt->close();
     <link rel="stylesheet" href="../css/patient-dashboard.css">
 
     <style>
-        /* ===== Logout Modal Styling ===== */
+        /* Logout Modal Styling  */
         .modal-overlay {
             position: fixed;
             inset: 0;

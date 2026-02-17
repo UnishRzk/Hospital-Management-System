@@ -10,9 +10,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
 
 $user_id = $_SESSION['user_id'];
 
-// ============================
 // HANDLE CANCEL ACTION
-// ============================
 if (isset($_GET['cancel_id']) && is_numeric($_GET['cancel_id'])) {
     $cancel_id = (int)$_GET['cancel_id'];
 
@@ -44,17 +42,13 @@ if (isset($_GET['cancel_id']) && is_numeric($_GET['cancel_id'])) {
     }
 }
 
-// ============================
 // FILTERS
-// ============================
 $search = $_GET['search'] ?? '';
 $statusFilter = $_GET['status'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 $sortOrder = $_GET['sort'] ?? 'desc';
 
-// ============================
 // FETCH APPOINTMENTS
-// ============================
 $sql = "SELECT a.appointment_id, a.patient_name, a.gender, a.address, a.message,
                a.status, a.appointment_date, d.name AS doctor_name
         FROM appointments a

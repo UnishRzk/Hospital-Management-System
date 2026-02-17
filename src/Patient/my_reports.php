@@ -10,15 +10,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
 
 $user_id = $_SESSION['user_id'];
 
-// ==========================
 // HANDLE DELETE ACTION
-// ==========================
 if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     $delete_id = (int)$_GET['delete_id'];
 
-    // Use prepared statements for secure operations
     
-    // 1. Fetch file path before deletion
     $stmt = $conn->prepare("SELECT file_path FROM prescriptions WHERE prescription_id = ? AND user_id = ?");
     $stmt->bind_param("ii", $delete_id, $user_id);
     $stmt->execute();
@@ -27,14 +23,11 @@ if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     if ($row = $result->fetch_assoc()) {
         $file_path = $row['file_path'];
 
-        // 2. Delete DB record
         $delete_stmt = $conn->prepare("DELETE FROM prescriptions WHERE prescription_id = ? AND user_id = ?");
         $delete_stmt->bind_param("ii", $delete_id, $user_id);
         
         if ($delete_stmt->execute()) {
-            // 3. Delete physical file (basic security check)
-            // Ensure the file path is within expected directory to prevent Path Traversal
-            // For a production system, you'd add stringent path validation here.
+
             if (file_exists($file_path) && strpos(realpath($file_path), realpath('../uploads/reports')) === 0) {
                         unlink($file_path);
             }
@@ -50,16 +43,12 @@ if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     }
 }
 
-// ============================
 // FILTERS & SEARCH
-// ============================
 $search = $_GET['search'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 $sortOrder = $_GET['sort'] ?? 'desc'; // 'desc' for Newest First
 
-// ============================
 // FETCH REPORTS
-// ============================
 $sql = "SELECT prescription_id, file_name, file_path, uploaded_at 
         FROM prescriptions 
         WHERE user_id = ?";
@@ -140,7 +129,7 @@ main {
 /* MODIFIED: Unified button styles for Apply and Upload */
 .filter-bar button, .filter-bar a.btn {
     color: #fff;
-    background-color: #015eac; /* Primary blue color */
+    background-color: #015eac; 
     border: none;
     border-radius: 10px;
     padding: 10px 20px;
@@ -210,7 +199,6 @@ tbody tr:hover {
 .action-icons a.edit { color: #015eac; }
 .action-icons a.delete { color: #f31026; }
 
-/* MODIFIED: View Report Button Styling to match Apply button */
 .view-report-btn {
     display: inline-block;
     padding: 10px 20px;

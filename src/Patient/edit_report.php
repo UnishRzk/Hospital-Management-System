@@ -10,9 +10,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
 
 $user_id = $_SESSION['user_id'];
 
-// ======================================
 // VALIDATE REPORT ID
-// ======================================
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: my_reports.php");
     exit();
@@ -20,9 +18,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $report_id = (int)$_GET['id'];
 
-// ======================================
 // FETCH EXISTING REPORT DETAILS
-// ======================================
 $stmt = $conn->prepare("SELECT * FROM prescriptions WHERE prescription_id = ? AND user_id = ?");
 $stmt->bind_param("ii", $report_id, $user_id);
 $stmt->execute();
@@ -35,9 +31,7 @@ if ($result->num_rows === 0) {
 
 $report = $result->fetch_assoc();
 
-// ======================================
 // HANDLE FORM SUBMISSION
-// ======================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_name = trim($_POST['file_name']);
 
@@ -45,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Report name is required.";
     } else {
         $upload_dir = "../pdf/";
-        $new_path = $report['file_path']; // default (keep old file)
+        $new_path = $report['file_path']; 
         $file_updated = false;
 
         // Check if a new file was uploaded
@@ -56,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($file_ext !== 'pdf') {
                 $error = "Only PDF files are allowed.";
             } else {
-                // Delete old file (if exists)
+                // Delete old file 
                 if (file_exists($report['file_path'])) {
                     unlink($report['file_path']);
                 }

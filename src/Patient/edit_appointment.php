@@ -2,9 +2,7 @@
 session_start();
 include("../config/db.php");
 
-// ==========================
 // ACCESS CONTROL
-// ==========================
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: ../auth/login.php");
     exit();
@@ -12,18 +10,14 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
 
 $user_id = $_SESSION['user_id'];
 
-// ==========================
 // VALIDATE APPOINTMENT ID
-// ==========================
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Invalid appointment ID.");
 }
 
 $appointment_id = (int)$_GET['id'];
 
-// ==========================
 // FETCH APPOINTMENT (Belongs to logged-in user only)
-// ==========================
 $stmt = $conn->prepare("
     SELECT a.*, d.name AS doctor_name 
     FROM appointments a
@@ -38,16 +32,12 @@ if (!$appointment) {
     die("Appointment not found or you do not have permission to edit this appointment.");
 }
 
-// ==========================
 // SAFE OUTPUT FUNCTION
-// ==========================
 function safe_html($value) {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-// ==========================
 // HANDLE UPDATE REQUEST
-// ==========================
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (in_array($appointment['status'], ['Cancelled', 'Completed'])) {

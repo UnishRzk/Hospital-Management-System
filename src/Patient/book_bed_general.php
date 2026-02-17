@@ -1,14 +1,11 @@
 <?php
-// PHP logic from the user's provided code
 session_start();
-include("../config/db.php"); // Connect to MySQL database
+include("../config/db.php"); 
 
-// --- XSS safe output function (required by the design structure) ---
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-// Ensure only logged-in patients can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: ../auth/login.php");
     exit();
@@ -18,8 +15,6 @@ $user_id = $_SESSION['user_id']; // Logged-in user's ID
 $success = "";
 $error = "";
 
-// --- MODIFICATION 1: Change 'Private/Semi-Private' to 'General' in the initial fetch ---
-// Step 1: Fetch all General, empty beds
 $sql = "SELECT bed_id FROM beds WHERE status = 'Empty' AND type = 'General'";
 $result = $conn->query($sql);
 
@@ -37,7 +32,7 @@ $form_data = [
     'reason_for_admission' => '', 'reserved_date' => ''
 ];
 
-// Step 2: Handle form submission
+//  Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Populate form_data and trim
     $form_data['bed_id'] = $_POST['bed_id'] ?? '';
@@ -61,8 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Invalid email address format.";
     }
     else {
-        // --- MODIFICATION 2: Change 'Private/Semi-Private' to 'General' in the check query ---
-        // Step 3: Double-check that bed is still available and is General
+    
         $check_sql = "SELECT bed_id FROM beds WHERE bed_id = ? AND status = 'Empty' AND type = 'General'";
         $stmt = $conn->prepare($check_sql);
         $stmt->bind_param("i", $bed_id);
@@ -70,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $check_result = $stmt->get_result();
 
         if ($check_result->num_rows === 1) {
-            // Step 4: Reserve the bed (UPDATE logic remains the same)
+            // Reserve the bed 
             $update_sql = "UPDATE beds 
                             SET user_id = ?, patient_name = ?, gender = ?, contact = ?, email = ?, address = ?, 
                                 reason_for_admission = ?, reserved_date = ?, status = 'Reserved'
@@ -258,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('successModal').classList.add('active');
     <?php endif; ?>
 
-    // Close modal and REDIRECT on click
     document.getElementById('closeModal').addEventListener('click', () => {
         // Redirect to the bed type selection page
         window.location.href = './bed_type.php'; 

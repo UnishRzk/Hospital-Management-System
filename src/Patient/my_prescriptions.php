@@ -10,9 +10,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
 
 $user_id = $_SESSION['user_id'];
 
-// ============================
 // FETCH COMPLETED APPOINTMENTS
-// ============================
 $search = $_GET['search'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 $sortOrder = $_GET['sort'] ?? 'desc';
@@ -69,15 +67,23 @@ main {
   box-shadow: 0 8px 24px rgba(6, 18, 32, 0.08);
   overflow: hidden;
 }
-table { width: 100%; border-collapse: collapse; }
-thead { background-color: #015eac; color: #fff; }
+table { width: 100%;
+ border-collapse: collapse;
+ }
+thead { 
+  background-color: #015eac; 
+  color: #fff; 
+}
 th, td {
   padding: 14px 18px;
   text-align: left;
   font-size: 0.95rem;
   border-bottom: 1px solid #eee;
 }
-tbody tr:hover { background-color: #f9fbff; transition: 0.3s ease; }
+tbody tr:hover { 
+  background-color: #f9fbff; 
+  transition: 0.3s ease; 
+}
 .status {
   padding: 6px 10px;
   border-radius: 20px;
@@ -85,7 +91,10 @@ tbody tr:hover { background-color: #f9fbff; transition: 0.3s ease; }
   font-size: 0.85rem;
   text-align: center;
 }
-.Completed { background-color: #d2f8e4; color: #2e7d32; }
+.Completed { 
+  background-color: #d2f8e4;
+   color: #2e7d32; 
+  }
 .actions a {
   display: inline-block;
   text-decoration: none;
@@ -96,7 +105,9 @@ tbody tr:hover { background-color: #f9fbff; transition: 0.3s ease; }
   font-size: 0.9rem;
   transition: background 0.3s ease;
 }
-.actions a:hover { background: #004d91; }
+.actions a:hover { 
+  background: #004d91; 
+  }
 </style>
 </head>
 <body>

@@ -1,14 +1,11 @@
 <?php
-// PHP logic from the user's provided code
 session_start();
-include("../config/db.php"); // Connect to MySQL database
+include("../config/db.php"); 
 
-// --- XSS safe output function (required by the design structure) ---
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-// Ensure only logged-in patients can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: ../auth/login.php");
     exit();
@@ -18,7 +15,6 @@ $user_id = $_SESSION['user_id']; // Logged-in user's ID
 $success = "";
 $error = "";
 
-// Step 1: Fetch all private, empty beds
 $sql = "SELECT bed_id FROM beds WHERE status = 'Empty' AND type = 'Private'";
 $result = $conn->query($sql);
 
@@ -29,16 +25,13 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// Store POST data to repopulate form fields on error
 $form_data = [
     'bed_id' => '', 'patient_name' => '', 'gender' => '',
     'contact' => '', 'email' => '', 'address' => '',
     'reason_for_admission' => '', 'reserved_date' => ''
 ];
 
-// Step 2: Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Populate form_data and trim
     $form_data['bed_id'] = $_POST['bed_id'] ?? '';
     $form_data['patient_name'] = trim($_POST['patient_name'] ?? '');
     $form_data['gender'] = $_POST['gender'] ?? '';
@@ -60,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Invalid email address format.";
     }
     else {
-        // Step 3: Double-check that bed is still available
+        //  Double-check that bed is still available
         $check_sql = "SELECT bed_id FROM beds WHERE bed_id = ? AND status = 'Empty' AND type = 'Private'";
         $stmt = $conn->prepare($check_sql);
         $stmt->bind_param("i", $bed_id);
@@ -68,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $check_result = $stmt->get_result();
 
         if ($check_result->num_rows === 1) {
-            // Step 4: Reserve the bed
+            //  Reserve the bed
             $update_sql = "UPDATE beds 
                            SET user_id = ?, patient_name = ?, gender = ?, contact = ?, email = ?, address = ?, 
                                reason_for_admission = ?, reserved_date = ?, status = 'Reserved'
@@ -222,45 +215,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // Set minimum date to today for reservation date
-    const dateInput = document.getElementById('reserved_date');
-    if (dateInput) {
-        dateInput.min = new Date().toISOString().split("T")[0];
-    }
+ // Set minimum date to today for reservation date
+ const dateInput = document.getElementById('reserved_date');
+ if (dateInput) {
+ dateInput.min = new Date().toISOString().split("T")[0];
+}
 
-    // Function to handle client-side validation
-    const validateField = (field) => {
-        const errorSpan = field.parentNode.querySelector('.error');
-        if (!errorSpan) return;
+// Function to handle client-side validation
+ const validateField = (field) => {
+ const errorSpan = field.parentNode.querySelector('.error');
+ if (!errorSpan) return;
 
-        errorSpan.textContent = ""; // Clear existing error
+ errorSpan.textContent = ""; // Clear existing error
 
-        if (field.hasAttribute('required') && !field.value.trim()) {
-            errorSpan.textContent = "This field is required.";
-        } else if (field.name === 'contact' && field.value.trim() && !/^[0-9]{7,15}$/.test(field.value)) {
-            errorSpan.textContent = "Enter a valid contact number (7-15 digits).";
-        } else if (field.name === 'email' && field.value.trim() && !field.checkValidity()) {
-             // Use browser's built-in email validation logic
-            errorSpan.textContent = "Enter a valid email address.";
-        }
-    };
+ if (field.hasAttribute('required') && !field.value.trim()) {
+ errorSpan.textContent = "This field is required.";
+ } else if (field.name === 'contact' && field.value.trim() && !/^[0-9]{7,15}$/.test(field.value)) {
+ errorSpan.textContent = "Enter a valid contact number (7-15 digits).";
+ } else if (field.name === 'email' && field.value.trim() && !field.checkValidity()) {
+// Use browser's built-in email validation logic
+errorSpan.textContent = "Enter a valid email address.";
+ }
+ };
 
-    // Attach validation listeners to all input fields
-    document.querySelectorAll('#bedBookingForm input, #bedBookingForm select, #bedBookingForm textarea').forEach(field => {
-        field.addEventListener('input', () => validateField(field));
-        field.addEventListener('blur', () => validateField(field));
-    });
+ // Attach validation listeners to all input fields
+ document.querySelectorAll('#bedBookingForm input, #bedBookingForm select, #bedBookingForm textarea').forEach(field => {
+field.addEventListener('input', () => validateField(field));
+ field.addEventListener('blur', () => validateField(field));
+ });
 
-    // Show success modal if PHP processing was successful
-    <?php if ($success): ?>
-      document.getElementById('successModal').classList.add('active');
-    <?php endif; ?>
+ // Show success modal if PHP processing was successful
+<?php if ($success): ?>
+ document.getElementById('successModal').classList.add('active');
+ <?php endif; ?>
 
-    // Close modal and REDIRECT on click (UPDATED LOGIC)
-    document.getElementById('closeModal').addEventListener('click', () => {
-        // Redirect to the bed type selection page
-        window.location.href = './bed_type.php'; 
-    });
+ // Close modal and REDIRECT on click (UPDATED LOGIC)
+ document.getElementById('closeModal').addEventListener('click', () => {
+ // Redirect to the bed type selection page
+ window.location.href = './bed_type.php'; 
+});
 });
 </script>
 
