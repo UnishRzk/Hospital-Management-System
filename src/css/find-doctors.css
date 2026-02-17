@@ -141,6 +141,7 @@ nav a:hover {
       color: #fff;
       border-color: #f31026;
     }
+    
     @keyframes fadeUp {
       to {
         opacity: 1;

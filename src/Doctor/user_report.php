@@ -15,16 +15,14 @@ if (!isset($_GET['user_id']) || !is_numeric($_GET['user_id'])) {
 }
 $patient_user_id = (int)$_GET['user_id'];
 
-// ============================
+
 // FILTERS & SEARCH
-// ============================
 $search = $_GET['search'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 $sortOrder = $_GET['sort'] ?? 'desc';
 
-// ============================
+
 // FETCH REPORTS FOR PATIENT
-// ============================
 $sql = "SELECT prescription_id, file_name, file_path, uploaded_at 
         FROM prescriptions 
         WHERE user_id = ?";
@@ -60,12 +58,14 @@ $reports = $stmt->get_result();
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Patient Reports | Doctor Panel</title>
 <style>
+
 body {
     font-family: Arial, sans-serif;
     background: #f1f7ff;
     margin: 0;
     padding: 0;
 }
+
 header {
     background-color: #015eac;
     color: white;
@@ -74,7 +74,12 @@ header {
     justify-content: space-between;
     align-items: center;
 }
-header h1 { font-size: 1.4rem; margin: 0; }
+
+header h1 { 
+    font-size: 1.4rem;
+     margin: 0; 
+    }
+
 header a {
     color: white;
     text-decoration: none;
@@ -82,11 +87,13 @@ header a {
     padding: 8px 14px;
     border-radius: 6px;
 }
+
 main {
     padding: 30px;
     max-width: 900px;
     margin: auto;
 }
+
 .filter-bar {
     background: white;
     border-radius: 10px;
@@ -98,18 +105,22 @@ main {
     gap: 10px;
     justify-content: center;
 }
+
 .filter-bar input, .filter-bar select, .filter-bar button {
     padding: 8px 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
 }
+
 .filter-bar button {
     background-color: #015eac;
     color: white;
     border: none;
     cursor: pointer;
 }
-.filter-bar button:hover { background-color: #004d91; }
+.filter-bar button:hover {
+     background-color: #004d91; 
+    }
 
 .table-container {
     background: white;
@@ -117,22 +128,27 @@ main {
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     overflow: hidden;
 }
+
 table {
     width: 100%;
     border-collapse: collapse;
 }
+
 thead {
     background-color: #015eac;
     color: white;
 }
+
 th, td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #eee;
 }
+
 tbody tr:hover {
     background: #f9fbff;
 }
+
 .view-btn {
     background-color: #015eac;
     color: white;
@@ -141,9 +157,11 @@ tbody tr:hover {
     text-decoration: none;
     font-size: 0.9rem;
 }
+
 .view-btn:hover {
     background-color: #004d91;
 }
+
 footer {
     text-align: center;
     padding: 15px;

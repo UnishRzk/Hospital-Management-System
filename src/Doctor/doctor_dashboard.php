@@ -21,7 +21,7 @@ $search = $_GET['search'] ?? '';
 $statusFilter = $_GET['status'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 
-// Query appointments (includes patient user_id)
+// Query appointments includes patient user_id
 $sql = "SELECT appointment_id, patient_name, gender, message, status, appointment_date, user_id
         FROM appointments
         WHERE doctor_id = ?";
@@ -60,60 +60,155 @@ $appointments = $stmt->get_result();
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Appointments | Doctor Panel</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-  body { display: flex; height: 100vh; background: #f9f9fb; }
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: Arial, sans-serif; 
+  }
+
+  body { 
+    display: flex; 
+    height: 100vh; 
+    background: #f9f9fb; 
+  }
 
   .sidebar {
-    width: 250px; background: #015eac; color: #fff; padding: 20px 0;
-    display: flex; flex-direction: column; align-items: center;
-  }
-  .sidebar h2 { margin-bottom: 30px; }
-  .sidebar a {
-    display: block; width: 100%; padding: 12px 20px;
-    color: #fff; text-decoration: none;
-  }
-  .sidebar a:hover, .sidebar a.active {
-    background: #004d91; border-left: 4px solid #fff;
+    width: 250px; 
+    background: #015eac; 
+    color: #fff; 
+    padding: 20px 0;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
   }
 
-  .main { flex: 1; padding: 20px; overflow-y: auto; }
+  .sidebar h2 { 
+    margin-bottom: 30px; 
+  }
+  .sidebar a {
+    display: block; 
+    width: 100%; 
+    padding: 12px 20px;
+    color: #fff; 
+    text-decoration: none;
+  }
+
+  .sidebar a:hover, .sidebar a.active {
+    background: #004d91; 
+    border-left: 4px solid #fff;
+  }
+
+  .main { 
+    flex: 1; 
+    padding: 20px; 
+    overflow-y: auto; 
+  }
 
   .topbar {
-    background: #fff; padding: 15px 20px; margin-bottom: 20px;
-    border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
+    background: #fff; 
+    padding: 15px 20px; 
+    margin-bottom: 20px;
+    border-radius: 12px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   }
-  .topbar h1 { color: #015eac; font-size: 1.6rem; }
-
-  .filter-bar form { display: flex; gap: 10px; flex-wrap: wrap; }
-  .filter-bar input, .filter-bar select, .filter-bar button {
-    padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px;
+  .topbar h1 { 
+    color: #015eac; 
+    font-size: 1.6rem; 
   }
+
+  .filter-bar form { 
+    display: flex; 
+    gap: 10px; 
+    flex-wrap: wrap; 
+  }
+
+  .filter-bar input, .filter-bar select, .filter-bar button {
+    padding: 8px 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+  }
+
   .filter-bar button {
-    background: #015eac; color: #fff; border: none; cursor: pointer;
+    background: #015eac; 
+    color: #fff; 
+    border: none; 
+    cursor: pointer;
     transition: 0.3s;
   }
-  .filter-bar button:hover { background: #004d91; }
 
-  .table-container { max-height: 500px; overflow-y: auto; border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; background: #fff; border-radius: 8px; }
-  th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; }
-  thead th { background: #f0f0f0; position: sticky; top: 0; }
+  .filter-bar button:hover { 
+    background: #004d91; 
+  }
+
+  .table-container { 
+    max-height: 500px; 
+    overflow-y: auto; 
+    border-radius: 8px; 
+  }
+
+  table { 
+    border-collapse: collapse; 
+    width: 100%; 
+    background: #fff; 
+    border-radius: 8px;
+   }
+
+  th, td { 
+    padding: 12px 15px; 
+    border-bottom: 1px solid #ddd; 
+    text-align: left;
+   }
+
+  thead th {
+     background: #f0f0f0; 
+     position: sticky; 
+     top: 0; 
+    }
 
   .btn {
-    display: inline-block; padding: 8px 12px; border-radius: 4px;
-    background: #015eac; color: #fff; text-decoration: none; font-size: 0.9rem;
-    border: none; cursor: pointer; transition: 0.3s;
+    display: inline-block; 
+    padding: 8px 12px; 
+    border-radius: 4px;
+    background: #015eac; 
+    color: #fff; 
+    text-decoration: none; 
+    font-size: 0.9rem;
+    border: none; 
+    cursor: pointer; 
+    transition: 0.3s;
   }
-  .btn:hover { background: #004d91; }
+
+  .btn:hover { 
+    background: #004d91; 
+  }
 
   .status {
-    padding: 6px 10px; border-radius: 4px; color: #fff; font-weight: bold;
-    text-align: center; display: inline-block; min-width: 90px;
+    padding: 6px 10px; 
+    border-radius: 4px; 
+    color: #fff; 
+    font-weight: bold;
+    text-align: center; 
+    display: inline-block; 
+    min-width: 90px;
   }
-  .status.Booked { background-color: #f5b914; color: #000; }
-  .status.Completed { background-color: #2ecc71; }
-  .status.Cancelled { background-color: #e74c3c; }
+
+  .status.Booked { 
+    background-color: #f5b914; 
+    color: #000; 
+  }
+
+  .status.Completed { 
+    background-color: #2ecc71; 
+  }
+
+  .status.Cancelled { 
+    background-color: #e74c3c; 
+    }
+    
 </style>
 </head>
 
