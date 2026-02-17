@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../config/db.php"); // adjust path if needed
+include("../config/db.php"); 
 
 // Role check
 // if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {

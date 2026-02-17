@@ -1,5 +1,4 @@
 <?php
-// Start session and check admin
 session_start();
 include("../config/db.php");
 
@@ -8,13 +7,13 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// ------------------ STEP 1: Validate Input ------------------
+// Validate Input
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Invalid user ID.");
 }
 $user_id = (int)$_GET['id'];
 
-// ------------------ STEP 2: Fetch User ------------------
+// Fetch User 
 $stmt = $conn->prepare("SELECT * FROM users WHERE user_id=?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -50,7 +49,7 @@ if ($role == 'doctor' && $roleData) {
     $education = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-// ------------------ STEP 3: Handle Form Submission ------------------
+// Handle Form Submission 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = !empty($_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : $user['password'];
@@ -136,12 +135,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Edit User</title>
     <meta charset="UTF-8">
     <style>
-        body { font-family: Arial; background: #f4f4f9; padding: 20px; }
-        .form-container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 12px; }
-        h2 { color: #015eac; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
-        button { background: #015eac; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
-        .edu-entry { border: 1px dashed #aaa; padding: 10px; margin: 10px 0; }
+        body { 
+            font-family: Arial; 
+            background: #f4f4f9;
+            padding: 20px; 
+        }
+
+        .form-container { 
+            max-width: 700px; 
+            margin: auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+        }
+
+        h2 { 
+            color: #015eac;
+         }
+
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 8px 0; 
+            border-radius: 6px; 
+            border: 1px solid #ccc; 
+        }
+
+        button { 
+            background: #015eac; 
+            color: white; 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+        }
+        .edu-entry { 
+            border: 1px dashed #aaa; 
+            padding: 10px; 
+            margin: 10px 0; 
+        }
     </style>
     <script>
         function addEducation() {

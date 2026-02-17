@@ -1,8 +1,6 @@
 <?php
-// Start the session to check user role
 session_start();
 
-// Connect to the database
 include("../config/db.php");
 
 // Only allow admins to access this page

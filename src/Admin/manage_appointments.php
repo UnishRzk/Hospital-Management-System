@@ -8,7 +8,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// --------------------- DELETE APPOINTMENT ---------------------
+// DELETE APPOINTMENT 
 if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     $delete_id = (int)$_GET['delete_id'];
     $stmt = $conn->prepare("DELETE FROM appointments WHERE appointment_id = ?");
@@ -18,12 +18,12 @@ if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     exit();
 }
 
-// --------------------- FILTER PARAMETERS ---------------------
+//  FILTER PARAMETERS
 $search = $_GET['search'] ?? '';
 $statusFilter = $_GET['status'] ?? '';
 $dateFilter = $_GET['date'] ?? '';
 
-// --------------------- BASE QUERY ---------------------
+//  BASE QUERY 
 $sql = "SELECT a.appointment_id, a.patient_name, a.gender, a.message, a.status, 
                a.appointment_date, d.name AS doctor_name
         FROM appointments a
@@ -33,7 +33,7 @@ $sql = "SELECT a.appointment_id, a.patient_name, a.gender, a.message, a.status,
 $params = [];
 $types = "";
 
-// --------------------- DYNAMIC FILTERS ---------------------
+//DYNAMIC FILTERS
 if ($search !== '') {
     $sql .= " AND (a.patient_name LIKE ? OR d.name LIKE ?)";
     $params[] = "%$search%";
@@ -69,11 +69,31 @@ $appointments = $stmt->get_result();
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Appointments | Admin Panel</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-  body { display: flex; height: 100vh; background: #f9f9fb; }
+
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: Arial, sans-serif; 
+  }
+
+  body { 
+    display: flex; 
+    height: 100vh; 
+    background: #f9f9fb; 
+  }
 
   /* Sidebar */
-  .sidebar { width: 250px; background: #015eac; color: #fff; padding: 20px 0; display: flex; flex-direction: column; align-items: center; }
+  .sidebar { 
+    width: 250px; 
+    background: #015eac; 
+    color: #fff; 
+    padding: 20px 0; 
+    display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+}
+
   .sidebar h2 { margin-bottom: 30px; }
   .sidebar a { display: block; width: 100%; padding: 12px 20px; color: #fff; text-decoration: none; }
   .sidebar a:hover, .sidebar a.active { background: #004d91; border-left: 4px solid #fff; }

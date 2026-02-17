@@ -2,25 +2,21 @@
 session_start();
 include("../config/db.php");
 
-// ==========================
+
 // ACCESS CONTROL
-// ==========================
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit();
 }
 
-// ==========================
 // VALIDATE APPOINTMENT ID
-// ==========================
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Invalid appointment ID.");
 }
 $appointment_id = (int)$_GET['id'];
 
-// ==========================
+
 // FETCH APPOINTMENT DATA
-// ==========================
 $stmt = $conn->prepare("SELECT * FROM appointments WHERE appointment_id = ?");
 $stmt->bind_param("i", $appointment_id);
 $stmt->execute();
@@ -30,16 +26,12 @@ if (!$appointment) {
     die("Appointment not found.");
 }
 
-// ==========================
 // SAFE OUTPUT FUNCTION
-// ==========================
 function safe_html($value) {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-// ==========================
 // HANDLE UPDATE REQUEST
-// ==========================
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // DELETE FUNCTIONALITY
     if (isset($_POST['delete'])) {

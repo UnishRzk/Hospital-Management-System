@@ -2,17 +2,13 @@
 session_start();
 include("../config/db.php");
 
-// ==========================
 // ACCESS CONTROL
-// ==========================
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit();
 }
 
-// ==========================
 // VALIDATE BED ID
-// ==========================
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: manage_beds.php");
     exit();
@@ -20,9 +16,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $bed_id = (int) $_GET['id'];
 
-// ==========================
 // FETCH EXISTING BED DATA
-// ==========================
 $stmt = $conn->prepare("SELECT * FROM beds WHERE bed_id = ?");
 $stmt->bind_param("i", $bed_id);
 $stmt->execute();
@@ -36,9 +30,7 @@ if ($result->num_rows === 0) {
 $bed = $result->fetch_assoc();
 $stmt->close();
 
-// ==========================
 // HANDLE FORM SUBMISSION
-// ==========================
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -51,7 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reserved_date = $_POST['reserved_date'] ?? null;
     $type = $_POST['type'] ?? '';
     $status = $_POST['status'] ?? '';
-    $gender = !empty($_POST['gender']) ? $_POST['gender'] : $bed['gender'];
+    // $gender = !empty($_POST['gender']) ? $_POST['gender'] : $bed['gender'];
+    if (!empty($_POST['gender'])) {
+    $gender = $_POST['gender'];
+    } else {
+    $gender = $bed['gender'];
+    }
 
     $valid_genders = ['male', 'female', 'other'];
     $valid_types = ['General', 'Semi-Private', 'Private'];
@@ -75,9 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ==========================
     // CLEAR ALL PATIENT DETAILS IF STATUS = EMPTY or OUT OF ORDER
-    // ==========================
     if (!$error && (strtolower($status) === 'empty' || strtolower($status) === 'out of order')) {
         $patient_name = null;
         $contact = null;
@@ -91,9 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_id = $bed['user_id']; // retain if not clearing
     }
 
-    // ==========================
     // UPDATE DATABASE
-    // ==========================
     if (!$error) {
         $stmt = $conn->prepare("
             UPDATE beds 
@@ -149,7 +142,9 @@ function e($val) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edit Bed | Admin Panel</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { 
+  box-sizing: border-box; margin: 0; padding: 0;
+}
 
 body {
   font-family: Roboto, Segoe UI, sans-serif;

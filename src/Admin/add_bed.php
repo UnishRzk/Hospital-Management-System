@@ -8,9 +8,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// ------------------------------
+
 // Handle form submission
-// ------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $num_beds = (int)$_POST['num_beds'];
     $type = $_POST['type'];
@@ -41,9 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ------------------------------
+
 // Helper function for escaping
-// ------------------------------
 function e($val) {
     return htmlspecialchars((string)$val, ENT_QUOTES, 'UTF-8');
 }
