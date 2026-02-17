@@ -2,7 +2,7 @@
 session_start();
 include("../config/db.php");
 
-// --- Secure Output Function ---
+// Secure Output Function 
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
@@ -96,17 +96,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Upload Report | Nurse Panel</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-  body { display: flex; height: 100vh; background: #f9f9fb; }
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: Arial, sans-serif; 
+  }
+
+  body {
+     display: flex; 
+     height: 100vh; 
+     background: #f9f9fb; 
+    }
 
   /* Sidebar */
-  .sidebar { width: 250px; background: #015eac; color: #fff; padding: 20px 0; display: flex; flex-direction: column; align-items: center; }
-  .sidebar h2 { margin-bottom: 30px; }
-  .sidebar a { display: block; width: 100%; padding: 12px 20px; color: #fff; text-decoration: none; }
-  .sidebar a:hover, .sidebar a.active { background: #004d91; border-left: 4px solid #fff; }
+  .sidebar { 
+    width: 250px; 
+    background: #015eac; 
+    color: #fff; 
+    padding: 20px 0; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+  }
+
+  .sidebar h2 { 
+    margin-bottom: 30px; 
+  }
+
+  .sidebar a { 
+    display: block; 
+    width: 100%; 
+    padding: 12px 20px; 
+    color: #fff; 
+    text-decoration: none; 
+  }
+
+  .sidebar a:hover, .sidebar a.active { 
+    background: #004d91; 
+    border-left: 4px solid #fff; 
+  }
 
   /* Main */
-  .main { flex: 1; padding: 40px; overflow-y: auto; display: flex; justify-content: center; align-items: center; }
+  .main { 
+    flex: 1; 
+    padding: 40px; 
+    overflow-y: auto; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+  }
 
   /* Upload Card */
   .upload-card {
@@ -119,12 +158,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     text-align: center;
     animation: fadeInUp 0.6s ease;
   }
-  .upload-card h2 { margin-bottom: 0.5rem; font-size: 22px; color: #015eac; }
-  .upload-card p.patient-info { margin-bottom: 1rem; color: #333; font-size: 0.95rem; }
+  .upload-card h2 { 
+    margin-bottom: 0.5rem; 
+    font-size: 22px; 
+    color: #015eac; 
+  }
+  .upload-card p.patient-info {
+     margin-bottom: 1rem; 
+     color: #333; font-size: 0.95rem; 
+    }
 
   /* Form */
-  .upload-card form { display: flex; flex-direction: column; gap: 1rem; text-align: left; }
-  .upload-card label { font-size: 0.95rem; color: #333; }
+  .upload-card form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+    text-align: left; 
+  }
+
+  .upload-card label { 
+    font-size: 0.95rem; 
+    color: #333; 
+  }
+
   .upload-card input[type="text"], .upload-card input[type="file"] {
     padding: 0.8rem 1rem;
     border: 1px solid #ccc;
@@ -133,7 +189,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     transition: border-color 0.3s;
     width: 100%;
   }
-  .upload-card input:focus { border-color: #015eac; outline: none; }
+  .upload-card input:focus { 
+    border-color: #015eac; 
+    outline: none; 
+  }
+
   .upload-card button {
     background: #015eac;
     color: #fff;
@@ -144,13 +204,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     cursor: pointer;
     transition: 0.3s;
   }
-  .upload-card button:hover { background: #1f4fbf; }
+  .upload-card button:hover {
+     background: #1f4fbf; 
+    }
 
   .btn-cancel {
     background: #ccc;
     color: #000;
   }
-  .btn-cancel:hover { background: #bbb; }
+  
+  .btn-cancel:hover { 
+    background: #bbb; 
+  }
 
   /* Alerts */
   .alert-success, .alert-error {
@@ -159,32 +224,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     font-size: 0.95rem;
     margin-bottom: 1rem;
   }
-  .alert-success { background: #e6ffe6; color: #047a04; border: 1px solid #047a04; }
-  .alert-error { background: #ffe6e6; color: #a10000; border: 1px solid #a10000; }
+
+  .alert-success { 
+    background: #e6ffe6; 
+    color: #047a04; 
+    border: 1px solid #047a04;
+  }
+
+  .alert-error { 
+    background: #ffe6e6; 
+    color: #a10000; 
+    border: 1px solid #a10000; 
+  }
 
   /* Modal */
   .modal {
-    display: none; position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
     background: rgba(0,0,0,0.5);
-    justify-content: center; align-items: center;
+    justify-content: center; 
+    align-items: center;
   }
+
   .modal-content {
-    background: #fff; padding: 2rem; border-radius: 12px;
-    border: 1px solid #ccc; text-align: center; max-width: 420px;
+    background: #fff;
+    padding: 2rem; 
+    border-radius: 12px;
+    border: 1px solid #ccc; 
+    text-align: center; 
+    max-width: 420px;
   }
+
   .modal-content button {
-    background: #015eac; color: white; padding: 10px 20px;
-    border: none; border-radius: 6px; cursor: pointer;
+    background: #015eac; 
+    color: white; 
+    padding: 10px 20px;
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer;
   }
-  .modal-content button:hover { background: #1f4fbf; }
+
+  .modal-content button:hover {
+     background: #1f4fbf; 
+    }
 
   /* Animation */
-  @keyframes fadeInUp { from {opacity: 0; transform: translateY(30px);} to {opacity: 1; transform: translateY(0);} }
+  @keyframes fadeInUp { from {
+    opacity: 0; 
+    transform: translateY(30px);
+  } to 
+  {
+    opacity: 1; 
+    transform: translateY(0);
+  } }
 
   @media (max-width: 600px) {
-    .sidebar { width: 200px; }
-    .upload-card { padding: 1.2rem; }
+    .sidebar { 
+      width: 200px; 
+    }
+    .upload-card { 
+      padding: 1.2rem; 
+    }
   }
 </style>
 </head>

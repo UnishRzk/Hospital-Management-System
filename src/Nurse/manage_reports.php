@@ -36,48 +36,138 @@ if ($search !== '') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manage Reports | Nurse Panel</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-  body { display: flex; height: 100vh; background: #f9f9fb; }
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: Arial, sans-serif; 
+  }
+
+  body { 
+    display: flex; 
+    height: 100vh; 
+    background: #f9f9fb; 
+  }
 
   /* Sidebar */
-  .sidebar { width: 250px; background: #015eac; color: #fff; padding: 20px 0; display: flex; flex-direction: column; align-items: center; }
-  .sidebar h2 { margin-bottom: 30px; }
-  .sidebar a { display: block; width: 100%; padding: 12px 20px; color: #fff; text-decoration: none; }
-  .sidebar a:hover, .sidebar a.active { background: #004d91; border-left: 4px solid #fff; }
+  .sidebar { 
+    width: 250px; 
+    background: #015eac; 
+    color: #fff; 
+    padding: 20px 0; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+  }
+
+  .sidebar h2 { 
+    margin-bottom: 30px; 
+  }
+
+  .sidebar a { 
+    display: block; 
+    width: 100%; 
+    padding: 12px 20px; 
+    color: #fff; 
+    text-decoration: none; 
+  }
+
+  .sidebar a:hover, .sidebar a.active { 
+    background: #004d91; 
+    border-left: 4px solid #fff; 
+  }
 
   /* Main */
-  .main { flex: 1; padding: 20px; overflow-y: auto; }
+  .main { 
+    flex: 1; 
+    padding: 20px; 
+    overflow-y: auto; 
+  }
 
   /* Topbar */
   .topbar {
-    background: #fff; padding: 15px 20px; margin-bottom: 20px;
-    border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
+    background: #fff; 
+    padding: 15px 20px; 
+    margin-bottom: 20px;
+    border-radius: 12px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   }
-  .topbar h1 { color: #015eac; font-size: 1.6rem; }
+
+  .topbar h1 { 
+    color: #015eac; 
+    font-size: 1.6rem; 
+  }
 
   /* Filter */
-  .filter-bar form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .filter-bar form { 
+    display: flex; 
+    gap: 10px; 
+    align-items: center; 
+    flex-wrap: wrap; 
+  }
+
   .filter-bar input[type="text"], .filter-bar button {
-    padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px;
+    padding: 8px 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px;
   }
+
   .filter-bar button {
-    background: #015eac; color: #fff; border: none; cursor: pointer; transition: 0.3s;
+    background: #015eac; 
+    color: #fff; 
+    border: none; 
+    cursor: pointer; 
+    transition: 0.3s;
   }
-  .filter-bar button:hover { background: #004d91; }
+
+  .filter-bar button:hover { 
+    background: #004d91; 
+  }
 
   /* Table */
-  .table-container { max-height: 500px; overflow-y: auto; border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; background: #fff; border-radius: 8px; }
-  th, td { padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; }
-  thead th { background: #f0f0f0; position: sticky; top: 0; }
+  .table-container { 
+    max-height: 500px; 
+    overflow-y: auto; 
+    border-radius: 8px; 
+  }
+
+  table { 
+    border-collapse: collapse; 
+    width: 100%; 
+    background: #fff; 
+    border-radius: 8px; 
+  }
+
+  th, td { 
+    padding: 12px 15px; 
+    border-bottom: 1px solid #ddd;
+     text-align: left; 
+    }
+
+  thead th {
+     background: #f0f0f0; 
+     position: sticky; 
+     top: 0; 
+    }
 
   /* Button */
   .upload-btn {
-    background: #015eac; color: #fff; border: none; border-radius: 4px;
-    padding: 8px 14px; text-decoration: none; cursor: pointer; transition: 0.3s;
+    background: #015eac; 
+    color: #fff; 
+    border: none; 
+    border-radius: 4px;
+    padding: 8px 14px; 
+    text-decoration: none; 
+    cursor: pointer; 
+    transition: 0.3s;
   }
-  .upload-btn:hover { background: #004d91; }
+  
+  .upload-btn:hover { 
+    background: #004d91; 
+  }
 
   /* Responsive */
   @media (max-width: 768px) {
