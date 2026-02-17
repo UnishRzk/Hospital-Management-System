@@ -2,9 +2,7 @@
 // Include the database connection file
 include("../config/db.php");
 
-// ------------------------------
 // Validate doctor_id from URL
-// ------------------------------
 
 // Check if doctor_id is missing
 if (!isset($_GET['doctor_id'])) {
@@ -22,9 +20,9 @@ if (!is_numeric($_GET['doctor_id'])) {
 $doctor_id = (int) $_GET['doctor_id'];
 
 
-// ------------------------------
+
 // Fetch doctor info from database
-// ------------------------------
+
 $stmt = $conn->prepare("
     SELECT doctor_id, name, email, department, designation, council_number, phone, photo
     FROM doctors
@@ -43,9 +41,7 @@ if (!$doctor) {
 }
 
 
-// ------------------------------
 // Fetch doctor education details
-// ------------------------------
 $edu_stmt = $conn->prepare("
     SELECT degree, institution, year_of_completion
     FROM doctor_education
@@ -58,17 +54,13 @@ $education = $edu_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $edu_stmt->close();
 
 
-// ------------------------------
-// Helper function for escaping output (XSS safe)
-// ------------------------------
+// Helper function for escaping output
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
 
-// ------------------------------
 // Determine doctor photo path
-// ------------------------------
 $photoPath = "../images/doctor.png"; // Default photo if none provided
 
 if (!empty($doctor['photo'])) {
