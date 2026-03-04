@@ -42,6 +42,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate inputs
     if (empty($username) || empty($password) || empty($confirm_password) || empty($email) || empty($full_name) || empty($phone) || empty($gender)) {
         $error = "All fields are required";
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $full_name)) {
+        // PHP Validation: Only alphabets and spaces allowed for Full Name
+        $error = "Full Name can only contain alphabets and spaces";
     } elseif ($password !== $confirm_password) {
         $error = "Passwords do not match";
     } elseif (strlen($password) < 6) {
@@ -180,22 +183,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const phoneInput = document.querySelector('input[name="phone"]');
         if (phoneInput) {
             phoneInput.addEventListener('input', function() {
-                // Remove any non-digit characters
                 this.value = this.value.replace(/\D/g, '');
-                
-                // Format as (XXX) XXX-XXXX if 10 digits
                 if (this.value.length === 10) {
                     this.value = this.value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
                 }
             });
         }
+
+        // Real-time Name Validation (prevents numbers/special chars as user types)
+        const nameInput = document.querySelector('input[name="full_name"]');
+        if (nameInput) {
+            nameInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+            });
+        }
     };
     
     function validateForm() {
+        const fullName = document.querySelector('input[name="full_name"]').value;
         const password = document.querySelector('input[name="password"]').value;
         const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
         const phone = document.querySelector('input[name="phone"]').value;
         
+        // Name Validation: Alphabets and spaces only
+        const nameRegex = /^[a-zA-Z\s]+$/;
+        if (!nameRegex.test(fullName)) {
+            alert("Full Name should only contain alphabets and spaces!");
+            return false;
+        }
+
         if (password !== confirmPassword) {
             alert("Passwords do not match!");
             return false;
@@ -206,7 +222,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             return false;
         }
         
-        // Basic phone validation (at least 10 digits)
         const phoneDigits = phone.replace(/\D/g, '');
         if (phoneDigits.length < 10) {
             alert("Please enter a valid phone number!");
@@ -621,7 +636,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             padding: 1.5rem;
         }
 
-        /* Brand Colors */
         .swasthya-color {
             color: var(--primary-blue);
         }
@@ -630,18 +644,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: var(--primary-red);
         }
 
-        /* Animations */
         @keyframes fadeInUp {
             from {opacity: 0; transform: translateY(30px);}
             to {opacity: 1; transform: translateY(0);}
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .signup-card {
                 padding: 2rem 1.5rem;
             }
-            
             .form-row {
                 flex-direction: column;
                 gap: 1.5rem;
@@ -652,15 +663,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             .signup-card {
                 padding: 1.5rem;
             }
-            
             .signup-card h2 {
                 font-size: 1.5rem;
             }
-            
             .form-input, .form-select {
                 padding: 0.9rem 0.9rem 0.9rem 2.8rem;
             }
-            
             .input-icon {
                 left: 0.9rem;
             }

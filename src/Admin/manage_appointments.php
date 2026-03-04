@@ -14,7 +14,7 @@ if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     $stmt = $conn->prepare("DELETE FROM appointments WHERE appointment_id = ?");
     $stmt->bind_param("i", $delete_id);
     $stmt->execute();
-    header("Location: manage_appointment.php");
+    header("Location: manage_appointments.php");
     exit();
 }
 
