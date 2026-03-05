@@ -8,7 +8,7 @@
 [![PHP](https://img.shields.io/badge/PHP-88%25-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![MySQL](https://img.shields.io/badge/Database-MySQL%208.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Docker](https://img.shields.io/badge/Deploy-Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![Stars](https://img.shields.io/github/stars/UnishRzk/swasthyatrack-hospital-management-system?style=social)](https://github.com/UnishRzk/swasthyatrack-hospital-management-system/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/UnishRzk/swasthyatrack-hospital-management-system?style=flat&logo=github&label=Stars&color=yellow)](https://github.com/UnishRzk/swasthyatrack-hospital-management-system/stargazers)
 
 <br/>
 
