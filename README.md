@@ -22,18 +22,18 @@
 
 ---
 
-##  Why SwasthyaTrack?
+## Why SwasthyaTrack?
 
-| | |
-|---|---|
-| 🧑‍⚕️ **Multi-Role Dashboards** | Dedicated interfaces for Patients, Doctors, Nurses, and Admins |
-| 📅 **Appointment Scheduling** | Book, reschedule, and cancel appointments with real-time status tracking |
-| 🛏️ **Bed Management** | Reserve, occupy, and release beds with live status updates |
-| 📋 **Digital Prescriptions** | Doctors create prescriptions; patients view them instantly |
-| 📄 **Medical Report Uploads** | Secure PDF uploads by nurses and patients |
-| 🔐 **Secure Authentication** | Hashed passwords, role-based access control, and session management |
-| 🐳 **Docker Ready** | One command deployment with Docker Compose |
-| 💡 **Clean & Extensible** | Well-structured LAMP codebase — easy to learn, fork, and extend |
+|                            |                                                                          |
+| -------------------------- | ------------------------------------------------------------------------ |
+| **Multi-Role Dashboards**  | Dedicated interfaces for Patients, Doctors, Nurses, and Admins           |
+| **Appointment Scheduling** | Book, reschedule, and cancel appointments with real-time status tracking |
+| **Bed Management**         | Reserve, occupy, and release beds with live status updates               |
+| **Digital Prescriptions**  | Doctors create prescriptions; patients view them instantly               |
+| **Medical Report Uploads** | Secure PDF uploads by nurses and patients                                |
+| **Secure Authentication**  | Hashed passwords, role-based access control, and session management      |
+| **Docker Ready**           | One command deployment with Docker Compose                               |
+| **Clean & Extensible**     | Well-structured LAMP codebase — easy to learn, fork, and extend          |
 
 ---
 
@@ -52,22 +52,22 @@ docker compose up --build -d
 
 This spins up three containers automatically:
 
-| Service | URL | Purpose |
-|---------|-----|---------|
-| **Application** | [http://localhost:8080](http://localhost:8080) | Apache + PHP app |
-| **phpMyAdmin** | [http://localhost:8081](http://localhost:8081) | Database admin UI |
-| **MySQL** | `localhost:3306` | Database server |
+| Service         | URL                                            | Purpose           |
+| --------------- | ---------------------------------------------- | ----------------- |
+| **Application** | [http://localhost:8080](http://localhost:8080) | Apache + PHP app  |
+| **phpMyAdmin**  | [http://localhost:8081](http://localhost:8081) | Database admin UI |
+| **MySQL**       | `localhost:3306`                               | Database server   |
 
 #### 3. Import the database
 
 1. Open **phpMyAdmin** at [http://localhost:8081](http://localhost:8081)
 2. Log in with:
 
-   | Field | Value |
-   |-------|-------|
-   | Server | `mysql` |
-   | Username | `root` |
-   | Password | `root` |
+   | Field    | Value   |
+   | -------- | ------- |
+   | Server   | `mysql` |
+   | Username | `root`  |
+   | Password | `root`  |
 
 3. Create a new database named **`swasthyatrack`**
 4. Select the `swasthyatrack` database → **Import** → choose [`database/swasthyatrack.sql`](database/swasthyatrack.sql) → **Go**
@@ -99,13 +99,13 @@ Open [http://localhost:8080](http://localhost:8080) and you're good to go! 🎉
 
 4. Update your PHP database config:
 
-   | Parameter | Value |
-   |-----------|-------|
-   | Host | `localhost` |
-   | Port | `3306` |
-   | User | `root` |
-   | Password | *(empty)* |
-   | Database | `swasthyatrack` |
+   | Parameter | Value           |
+   | --------- | --------------- |
+   | Host      | `localhost`     |
+   | Port      | `3306`          |
+   | User      | `root`          |
+   | Password  | _(empty)_       |
+   | Database  | `swasthyatrack` |
 
 5. Open the app at: `http://localhost/swasthyatrack-hospital-management-system/src`
 
@@ -119,38 +119,38 @@ Open [http://localhost:8080](http://localhost:8080) and you're good to go! 🎉
 
 > **Try it instantly!** Use these credentials after importing the database to explore every role.
 
-### 🟢 Quick Access (one account per role)
+### Quick Access (one account per role)
 
-| Role | Username | Password |
-|------|----------|----------|
-|  **Admin** | `admin` | `admin` |
-|  **Doctor** | `jpark` | `Med@2900` |
-|  **Nurse** | `schaudhary` | `Med@3012` |
-|  **Patient** | `unishrzk` | `unish123` |
+| Role        | Username     | Password   |
+| ----------- | ------------ | ---------- |
+| **Admin**   | `admin`      | `admin`    |
+| **Doctor**  | `jpark`      | `Med@2900` |
+| **Nurse**   | `schaudhary` | `Med@3012` |
+| **Patient** | `unishrzk`   | `unish123` |
 
 <details>
 <summary><strong>🧑‍⚕️ All Doctor Accounts (16 available)</strong></summary>
 
 <br/>
 
-| # | Username | Password |
-|---|----------|----------|
-| 1 | `jpark` | `Med@2900` |
-| 2 | `lneupane` | `Med@7789` |
-| 3 | `nshrestha` | `Med@3456` |
-| 4 | `apoudel` | `Med@5678` |
-| 5 | `sgurung` | `Med@6789` |
-| 6 | `pjoshi` | `Med@7890` |
-| 7 | `mrai` | `Med@9012` |
-| 8 | `kacharya` | `Med@2234` |
-| 9 | `pkarki` | `Med@4456` |
-| 10 | `sumanadh` | `Med@1234` |
-| 11 | `mthompson` | `Med@2566` |
-| 12 | `liwei` | `Med@2677` |
-| 13 | `sjohnson` | `Med@2788` |
-| 14 | `rkoirala` | `Med@2345` |
-| 15 | `aiyer` | `Med@2455` |
-| 16 | `epetrova` | `Med@3011` |
+| #   | Username    | Password   |
+| --- | ----------- | ---------- |
+| 1   | `jpark`     | `Med@2900` |
+| 2   | `lneupane`  | `Med@7789` |
+| 3   | `nshrestha` | `Med@3456` |
+| 4   | `apoudel`   | `Med@5678` |
+| 5   | `sgurung`   | `Med@6789` |
+| 6   | `pjoshi`    | `Med@7890` |
+| 7   | `mrai`      | `Med@9012` |
+| 8   | `kacharya`  | `Med@2234` |
+| 9   | `pkarki`    | `Med@4456` |
+| 10  | `sumanadh`  | `Med@1234` |
+| 11  | `mthompson` | `Med@2566` |
+| 12  | `liwei`     | `Med@2677` |
+| 13  | `sjohnson`  | `Med@2788` |
+| 14  | `rkoirala`  | `Med@2345` |
+| 15  | `aiyer`     | `Med@2455` |
+| 16  | `epetrova`  | `Med@3011` |
 
 </details>
 
@@ -158,7 +158,7 @@ Open [http://localhost:8080](http://localhost:8080) and you're good to go! 🎉
 
 ## ✨ Features
 
-### 🧑‍🤝‍🧑 Patient Portal
+### Patient Portal
 
 - Register a new account with secure credential storage
 - Book, edit, or cancel appointments by selecting doctor, date, and time slot
@@ -166,18 +166,18 @@ Open [http://localhost:8080](http://localhost:8080) and you're good to go! 🎉
 - Upload personal medical reports (PDF) and view nurse-uploaded reports
 - View digital prescriptions issued after consultations
 
-### 🧑‍⚕️ Doctor Dashboard
+### Doctor Dashboard
 
 - View all scheduled appointments with status tracking
 - Mark appointments as **Completed**, **Booked**, or **Cancelled**
 - Write and submit digital prescriptions (medicines, dosages, instructions)
 
-### 👩‍⚕️ Nurse Dashboard
+### Nurse Dashboard
 
 - View all doctor-assigned appointments and update statuses
 - Upload patient medical reports with metadata, securely linked to patient records
 
-### 👨‍💼 Administrator Dashboard
+### Administrator Dashboard
 
 - **User Management** — Add, update, delete users; assign roles; reset passwords
 - **Appointment Management** — View, update, or cancel appointments hospital-wide
@@ -187,15 +187,15 @@ Open [http://localhost:8080](http://localhost:8080) and you're good to go! 🎉
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Runtime** | Linux (Ubuntu/WSL2) |
-| **Containerization** | Docker & Docker Compose |
-| **Web Server** | Apache HTTP Server |
-| **Backend** | PHP |
-| **Database** | MySQL 8.0 |
-| **DB Admin** | phpMyAdmin |
-| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
+| Layer                | Technology                      |
+| -------------------- | ------------------------------- |
+| **Runtime**          | Linux (Ubuntu/WSL2)             |
+| **Containerization** | Docker & Docker Compose         |
+| **Web Server**       | Apache HTTP Server              |
+| **Backend**          | PHP                             |
+| **Database**         | MySQL 8.0                       |
+| **DB Admin**         | phpMyAdmin                      |
+| **Frontend**         | HTML5, CSS3, Vanilla JavaScript |
 
 > Built entirely on the **LAMP stack** — no external JS/CSS frameworks required. All tools are open-source and well-documented.
 
@@ -209,6 +209,7 @@ SwasthyaTrack follows a **three-tier client–server architecture**:
 <summary><strong>📎 View full architecture diagram</strong></summary>
 
 ![System Architecture](docs/diagrams/architecture.png)
+
 </details>
 
 ---
@@ -219,16 +220,14 @@ SwasthyaTrack follows a **three-tier client–server architecture**:
 
 ### Core Tables
 
-| Table | Purpose |
-|-------|---------|
-| `users` | Login credentials and role (`patient`, `doctor`, `nurse`, `admin`) |
-| `doctors` / `patients` / `nurses` / `admins` | Role-specific profiles linked via `user_id` (1:1) |
-| `appointments` | Patient–doctor bookings with status (`Booked`, `Cancelled`, `Completed`) |
-| `doctor_education` | Multiple education records per doctor (1:many) |
-| `beds` | Bed availability, type, and status tracking |
-| `prescriptions` | Uploaded report/prescription file metadata per user |
-
-
+| Table                                        | Purpose                                                                  |
+| -------------------------------------------- | ------------------------------------------------------------------------ |
+| `users`                                      | Login credentials and role (`patient`, `doctor`, `nurse`, `admin`)       |
+| `doctors` / `patients` / `nurses` / `admins` | Role-specific profiles linked via `user_id` (1:1)                        |
+| `appointments`                               | Patient–doctor bookings with status (`Booked`, `Cancelled`, `Completed`) |
+| `doctor_education`                           | Multiple education records per doctor (1:many)                           |
+| `beds`                                       | Bed availability, type, and status tracking                              |
+| `prescriptions`                              | Uploaded report/prescription file metadata per user                      |
 
 ## 📐 System Design
 
@@ -236,72 +235,86 @@ SwasthyaTrack follows a **three-tier client–server architecture**:
 <summary><strong>Use Case Diagram</strong></summary>
 
 ![Use Case Diagram](docs/diagrams/usecase-diagram.png)
+
 </details>
 
 <details>
 <summary><strong>DFD — Level 0</strong></summary>
 
 ![DFD Level 0](docs/diagrams/dfd-level0.png)
+
 </details>
 
 <details>
 <summary><strong>DFD — Level 1</strong></summary>
 
 ![DFD Level 1](docs/diagrams/dfd-level1.png)
+
 </details>
 
 <details>
 <summary><strong>Physical DFD</strong></summary>
 
 ![Physical DFD](docs/diagrams/physical-dfd.png)
+
 </details>
 
 <details>
 <summary><strong>Entity Relationship Diagram</strong></summary>
 
 ![ER Diagram](docs/diagrams/ER.png)
+
 </details>
 
 ---
 
 ## 📸 Screenshots
 
-
-
 #### Patient Dashboard
+
 ![Patient Dashboard](docs/screenshots/patient-dashboard.png)
 
 #### Book Bed
+
 ![Book Bed](docs/screenshots/book-bed.png)
 
 #### My Appointments
+
 ![My Appointments](docs/screenshots/my-appointments.png)
 
 <details>
 <summary><strong>🖥️ View all screenshots</strong></summary>
 
 #### Landing Page
+
 ![Landing Page](docs/screenshots/landing-page1.png)
 
 #### Login
+
 ![Login Page](docs/screenshots/login.png)
 
 #### Register
+
 ![Register Page](docs/screenshots/register.png)
 
 #### Select Doctors
+
 ![Select Doctors](docs/screenshots/select-doctors.png)
 
 #### Book Appointment
+
 ![Book Appointment](docs/screenshots/book-appointment.png)
 
 #### Prescription View
+
 ![Prescription](docs/screenshots/prescription.png)
 
 #### Admin Dashboard
+
 ![Admin Dashboard](docs/screenshots/admin-panel.png)
 
 #### Doctor Dashboard
+
 ![Doctor Dashboard](docs/screenshots/doctor-dashboard.png)
 
 </details>
@@ -312,10 +325,10 @@ SwasthyaTrack follows a **three-tier client–server architecture**:
 
 SwasthyaTrack was validated through both **unit testing** and **system testing**.
 
-| Type | Scope | Details |
-|------|-------|---------|
-| **Unit Testing** | Individual modules (signup, login, booking, etc.) | Tested with predefined inputs; expected vs. actual outcomes compared |
-| **System Testing** | End-to-end workflows | Covered signup → login → appointment booking → bed reservation → prescription flow |
+| Type               | Scope                                             | Details                                                                            |
+| ------------------ | ------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Unit Testing**   | Individual modules (signup, login, booking, etc.) | Tested with predefined inputs; expected vs. actual outcomes compared               |
+| **System Testing** | End-to-end workflows                              | Covered signup → login → appointment booking → bed reservation → prescription flow |
 
 All core functionalities passed as expected. Error handling was validated throughout the application flow.
 
@@ -325,10 +338,10 @@ All core functionalities passed as expected. Error handling was validated throug
 
 ## 📖 Documentation
 
-| Resource | Link |
-|----------|------|
-| Project Report | [docs/project-report.pdf](docs/project-report.pdf) |
-| Testing Document | [docs/Testing/Testing.pdf](docs/Testing/Testing.pdf) |
+| Resource          | Link                                                     |
+| ----------------- | -------------------------------------------------------- |
+| Project Report    | [docs/project-report.pdf](docs/project-report.pdf)       |
+| Testing Document  | [docs/Testing/Testing.pdf](docs/Testing/Testing.pdf)     |
 | Database SQL Dump | [database/swasthyatrack.sql](database/swasthyatrack.sql) |
 
 ---
